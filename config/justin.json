@@ -1,0 +1,20 @@
+{
+  "Logger": {
+    "consoleLevel": "debug",
+    "fileLevel": "debug",
+    "filename": "logs/out.log",
+    "logToFile": false
+  },
+  "RDS": {
+    "host": "10.211.55.6",
+    "user": "root",
+    "password": "Pa$$w0rd",
+    "port": 3306,
+    "db": "target",
+    "tableImportState": "hitpath_import",
+    "tableImportMergeState": "hitpath_import_merge",
+    "tableLandingPages": "hitpath_landing_pages",
+    "tableAffiliates": "hitpath_affiliates",
+    "clientId": "node_hitpath_importer"
+  }
+}
