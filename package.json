@@ -10,6 +10,7 @@
     "private-repo": "git+ssh://git@bitbucket.org:JADurham909/aeg-logger.git#master",
     "config": "^1.12.0",
     "async": "^0.9.0",
-    "underscore": "^1.8.2"
+    "underscore": "^1.8.2",
+    "mysql": "^2.5.5"
   }
 }
