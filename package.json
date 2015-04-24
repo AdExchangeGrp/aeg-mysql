@@ -1,7 +1,7 @@
 {
   "name": "aeg-mysql",
   "private": true,
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "./lib/extensions.js",
   "devDependencies": {
     "should": "^5.2.0"
