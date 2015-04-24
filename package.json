@@ -7,7 +7,7 @@
     "should": "^5.2.0"
   },
   "dependencies": {
-    "aeg-logger": "git+ssh://git@bitbucket.org:AdExchangeGrp/aeg-logger.git#master",
+    "aeg-logger": "git+ssh://git@bitbucket.org:AdExchangeGrp/aeg-logger.git#v0.0.3",
     "config": "^1.12.0",
     "async": "^0.9.0",
     "underscore": "^1.8.2",
