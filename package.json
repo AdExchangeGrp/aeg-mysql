@@ -1,13 +1,23 @@
 {
   "name": "aeg-mysql",
   "private": true,
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "./lib/extensions.js",
+  "scripts": {
+    "test": "mocha --recursive test/",
+    "test:watch": "npm run test -- -w",
+    "jshint": "jshint .",
+    "jshint:watch": "npm run jshint && onchange \"**/*.js\" \".jshint*\" -- npm run jshint",
+    "dev": "parallelshell \"npm run jshint:watch\" \"npm run test:watch\""
+  },
   "devDependencies": {
-    "should": "^5.2.0"
+    "should": "^5.2.0",
+    "mocha": "^2.2.5",
+    "parallelshell": "^1.1.1",
+    "onchange": "^1.1.0"
   },
   "dependencies": {
-    "aeg-logger": "git+ssh://git@bitbucket.org:AdExchangeGrp/aeg-logger.git#v0.0.3",
+    "aeg-logger": "git+ssh://git@bitbucket.org:AdExchangeGrp/aeg-logger.git#v0.0.4",
     "config": "^1.12.0",
     "async": "^0.9.0",
     "underscore": "^1.8.2",
