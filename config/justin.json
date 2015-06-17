@@ -6,11 +6,11 @@
     "logToFile": false
   },
   "RDS": {
-    "host": "10.211.55.6",
-    "user": "root",
-    "password": "Pa$$w0rd",
+    "host": "aedb.crg9xjuvtppr.us-west-2.rds.amazonaws.com",
+    "user": "read_user",
+    "password": "R3ad3200",
     "port": 3306,
-    "db": "target",
+    "db": "aedb",
     "tableImportState": "hitpath_import",
     "tableImportMergeState": "hitpath_import_merge",
     "tableLandingPages": "hitpath_landing_pages",
