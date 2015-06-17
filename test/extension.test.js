@@ -4,7 +4,6 @@ require('should');
 var mysql = require('mysql');
 var config = require('config');
 var extensions = require('../lib/extensions');
-var terminus = require('terminus');
 var logger = require('aeg-logger');
 
 describe('extensions', function () {
@@ -48,25 +47,13 @@ describe('extensions', function () {
 				queueLimit: 0
 			});
 
-			var errorState;
-
-			extensions.queryStream(rdsPool, 'select * from transaction limit 1', null, function (err, result) {
-				result.query.stream({highWaterMark: 5})
-					.on('error', function (err) {
-						errorState = true;
-						logger.error('An error!', err);
-					})
-					.pipe(terminus({objectMode: true}, processRecord))
-					.on('finish', function() {
-						result.connection.release();
-						done(errorState);
-					});
-
-				function processRecord(chunk, encoding, callback) {
-					logger.info(chunk);
-					callback();
-				}
-			});
+			extensions.queryStream(rdsPool, 'select * from transaction limit 1', null,
+				function (record) {
+					logger.info(record);
+				},
+				function (err) {
+					done(err);
+				});
 		});
 	});
 });
