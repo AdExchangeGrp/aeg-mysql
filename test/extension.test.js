@@ -50,7 +50,7 @@ describe('extensions', function () {
 
 			var errorState;
 
-			extensions.queryStream(rdsPool, 'select * from transaction limit 1', [], function (err, result) {
+			extensions.queryStream(rdsPool, 'select * from transaction limit 1', null, function (err, result) {
 				result.query.stream({highWaterMark: 5})
 					.on('error', function (err) {
 						errorState = true;
