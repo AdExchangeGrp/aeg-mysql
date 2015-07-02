@@ -6,15 +6,19 @@
   "scripts": {
     "test": "mocha --recursive test/",
     "test:watch": "npm run test -- -w",
+    "test:coverage": "istanbul cover _mocha -- --recursive test/",
     "jshint": "jshint .",
     "jshint:watch": "npm run jshint && onchange \"**/*.js\" \".jshint*\" -- npm run jshint",
-    "dev": "parallelshell \"npm run jshint:watch\" \"npm run test:watch\""
+    "dev": "parallelshell \"npm run jshint:watch\" \"npm run test:watch\"",
+    "build": "mocha --recursive test/ -R xunit-file"
   },
   "devDependencies": {
     "should": "^5.2.0",
     "mocha": "^2.2.5",
     "parallelshell": "^1.1.1",
-    "onchange": "^1.1.0"
+    "onchange": "^1.1.0",
+    "xunit-file": "0.0.6",
+    "istanbul": "^0.3.17"
   },
   "dependencies": {
     "aeg-logger": "git+ssh://git@bitbucket.org:AdExchangeGrp/aeg-logger.git#v0.0.4",

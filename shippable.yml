@@ -1,0 +1,45 @@
+# language setting
+language: node_js
+
+# environment
+cache: true
+
+env:
+  global:
+    - XUNIT_FILE=shippable/testresults/result.xml
+    - PROJECT=aeg-mysql
+    - secure: Szf25H2dsTxIMkNFYfYni/9pS2XgCbG5vad9Q1jUMW1DKXaE8w2k/SIeBsUA1gaF+rE7d4JPJjx/vb+52ALHsbx+z9GIDbU56rU5sLVVL2fSnOHD92qP3wTE8kuCWn4CgRtDtr/1i1sdP0MENmY/7UIC2FjJPiCoDQb8b3MHC0kZYMkEqcYq+EQlbChTO3312L5uAjteV4s+rd6Mcqy/jTDhD3yhNRZCN+qJ8msaQMpWTZixtbCECg2DNp1NGu3h37oKaZ2qRnoCUq64nz3/JoylxhX6yAHMB3DzAFYw1bGVerqTWBtXHwvwHUJeA8ds79+kOYj3+wmxvvdN1sBoKw==
+
+# exclude
+branches:
+  except:
+    - dev
+
+# include
+branches:
+  only:
+    - master
+
+# version number
+node_js:
+  - "0.10"
+
+# install dependencies
+before_install:
+  - npm -g install jshint
+
+# running the tests and jshint
+script:
+  - npm run jshint
+  - npm run build
+
+# Tell istanbul to generate a coverage report
+after_script:
+  - ./node_modules/.bin/istanbul cover --dir  shippable/codecoverage/ _mocha -- --recursive test/
+  - ./node_modules/.bin/istanbul report cobertura --dir  shippable/codecoverage/
+
+after_failure:
+  - python slack_notifier.py --project $PROJECT --token $SLACK_TOKEN
+
+after_success:
+  - python slack_notifier.py --project $PROJECT --token $SLACK_TOKEN -s
