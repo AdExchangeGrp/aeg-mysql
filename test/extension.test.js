@@ -30,7 +30,7 @@ describe('extensions', function () {
 		});
 	});
 
-	describe('#queryStream()', function () {
+	describe.skip('#queryStream()', function () {
 		it('should return without error', function (done) {
 
 			var rdsConf = config.get('RDS');
