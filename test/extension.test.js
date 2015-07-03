@@ -48,8 +48,9 @@ describe('extensions', function () {
 			});
 
 			extensions.queryStream(rdsPool, 'select * from transaction limit 1', null,
-				function (record) {
+				function (record, callback) {
 					logger.info(record);
+					callback();
 				},
 				function (err) {
 					done(err);
