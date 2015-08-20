@@ -3,8 +3,8 @@
 require('should');
 var mysql = require('mysql');
 var config = require('config');
-var extensions = require('../lib/extensions');
-var logger = require('aeg-logger');
+var extensions = require('../../lib/extensions');
+var logger = require('@adexchangedevops/aeg-logger');
 
 describe('extensions', function () {
 	describe('#testPoolProperties()', function () {

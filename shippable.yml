@@ -9,7 +9,7 @@ env:
     - XUNIT_FILE=shippable/testresults/result.xml
     - PROJECT=aeg-mysql
     - secure: Szf25H2dsTxIMkNFYfYni/9pS2XgCbG5vad9Q1jUMW1DKXaE8w2k/SIeBsUA1gaF+rE7d4JPJjx/vb+52ALHsbx+z9GIDbU56rU5sLVVL2fSnOHD92qP3wTE8kuCWn4CgRtDtr/1i1sdP0MENmY/7UIC2FjJPiCoDQb8b3MHC0kZYMkEqcYq+EQlbChTO3312L5uAjteV4s+rd6Mcqy/jTDhD3yhNRZCN+qJ8msaQMpWTZixtbCECg2DNp1NGu3h37oKaZ2qRnoCUq64nz3/JoylxhX6yAHMB3DzAFYw1bGVerqTWBtXHwvwHUJeA8ds79+kOYj3+wmxvvdN1sBoKw==
-
+    - secure: MEepYd5zIPOm4IGuF6zbh3gn0AueLOHa4jcbMN6Wn7cbqVjJ9gVbPdvtCdRAh/GK2atPRzwR5VpQsHNCi5fBPMmJe0iCnFc3MOkjUyNkVNUMPckg0Gk4WGq1ib6kXdmBt5x9Jr5OqAr8QJPrdQKF6n5c5SZgKeG9IL61s3ApjeO8ep3hCVBcSHzektNecL9AhVvJd/hCcLMfL2Oe9VlpRgyRnygw5ZfTUes+4Hamc1CbymyC1hjaVmrR9g+d1XkP9lm+YA7wAtQ1pFFj0zfhieIwjANyTjCVPNM5+LQldQ4binSZHlbVo9QnHXqTvjqvheJ8jtnpyXc9UuVU0KhfAA==
 # exclude
 branches:
   except:
@@ -26,7 +26,9 @@ node_js:
 
 # install dependencies
 before_install:
+  - npm install npm -g
   - npm -g install jshint
+  - echo $NPM_TOKEN >> ~/.npmrc
 
 # running the tests and jshint
 script:
@@ -35,7 +37,7 @@ script:
 
 # Tell istanbul to generate a coverage report
 after_script:
-  - ./node_modules/.bin/istanbul cover --dir  shippable/codecoverage/ _mocha -- --recursive test/
+  - ./node_modules/.bin/istanbul cover --dir  shippable/codecoverage/ _mocha -- --recursive test/unit/
   - ./node_modules/.bin/istanbul report cobertura --dir  shippable/codecoverage/
 
 after_failure:
