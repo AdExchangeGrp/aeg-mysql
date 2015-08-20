@@ -6,9 +6,9 @@
     "logToFile": false
   },
   "RDS": {
-    "host": "aedb.crg9xjuvtppr.us-west-2.rds.amazonaws.com",
-    "user": "hitpath_import",
-    "password": "!Mp0rt",
+    "host": "",
+    "user": "",
+    "password": "",
     "port": 3306,
     "db": "hitpath_import",
     "tableImportState": "hitpath_import",
