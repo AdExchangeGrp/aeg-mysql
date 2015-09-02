@@ -21,7 +21,8 @@ describe('extensions', function () {
 				insecureAuth: true,
 				acquireTimeout: 120000,
 				waitForConnections: true,
-				queueLimit: 0
+				queueLimit: 0,
+				timezone: 'Z'
 			});
 
 			rdsPool.should.have.propertyByPath('config', 'connectionConfig', 'database').eql(rdsConf.db);
@@ -44,7 +45,8 @@ describe('extensions', function () {
 				insecureAuth: true,
 				acquireTimeout: 120000,
 				waitForConnections: true,
-				queueLimit: 0
+				queueLimit: 0,
+				timezone: 'Z'
 			});
 
 			extensions.queryStream(rdsPool, 'select * from transaction limit 1', null,
