@@ -1,6 +1,6 @@
 {
   "name": "@adexchangedevops/aeg-mysql",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Mysql driver",
   "main": "./lib/extensions.js",
   "author": "Justin Durham",
