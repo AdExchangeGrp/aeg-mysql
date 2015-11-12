@@ -34,5 +34,6 @@
     "mysql": "^2.5.5",
     "underscore": "^1.8.2",
     "terminus": "^1.0.12"
-  }
+  },
+  "engine": "node >= 4.1.0"
 }
