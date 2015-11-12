@@ -6,33 +6,23 @@ cache: true
 
 env:
   global:
+    - NODE_ENV=development
     - XUNIT_FILE=shippable/testresults/result.xml
     - PROJECT=aeg-mysql
     - secure: MEepYd5zIPOm4IGuF6zbh3gn0AueLOHa4jcbMN6Wn7cbqVjJ9gVbPdvtCdRAh/GK2atPRzwR5VpQsHNCi5fBPMmJe0iCnFc3MOkjUyNkVNUMPckg0Gk4WGq1ib6kXdmBt5x9Jr5OqAr8QJPrdQKF6n5c5SZgKeG9IL61s3ApjeO8ep3hCVBcSHzektNecL9AhVvJd/hCcLMfL2Oe9VlpRgyRnygw5ZfTUes+4Hamc1CbymyC1hjaVmrR9g+d1XkP9lm+YA7wAtQ1pFFj0zfhieIwjANyTjCVPNM5+LQldQ4binSZHlbVo9QnHXqTvjqvheJ8jtnpyXc9UuVU0KhfAA==
-
-# exclude
-branches:
-  except:
-    - dev
 
 # include
 branches:
   only:
     - master
 
-# version number
-node_js:
-  - "0.10"
-
 # install dependencies
 before_install:
-  - npm install npm -g
-  - npm -g install jshint
   - echo $NPM_TOKEN >> ~/.npmrc
+  - shippable_retry npm install
 
 # running the tests and jshint
 script:
-  - npm run jshint
   - npm run build
 
 # Tell istanbul to generate a coverage report
