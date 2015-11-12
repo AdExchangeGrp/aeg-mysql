@@ -1,5 +1,5 @@
 {
-  "Logger": {
+  "logger": {
     "consoleLevel": "debug",
     "fileLevel": "debug",
     "filename": "logs/out.log",

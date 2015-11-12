@@ -1,16 +1,16 @@
 {
-  "Logger": {
+  "logger": {
     "consoleLevel": "debug",
     "fileLevel": "debug",
     "filename": "logs/out.log",
     "logToFile": false
   },
   "RDS": {
-    "host": "",
-    "user": "",
-    "password": "",
+    "host": "aedb.crg9xjuvtppr.us-west-2.rds.amazonaws.com",
+    "user": "hitpath_import",
+    "password": "!Mp0rt",
     "port": 3306,
-    "db": "aedb",
+    "db": "hitpath_import",
     "tableImportState": "hitpath_import",
     "tableImportMergeState": "hitpath_import_merge",
     "tableLandingPages": "hitpath_landing_pages",

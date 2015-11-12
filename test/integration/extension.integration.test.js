@@ -4,7 +4,7 @@ require('should');
 var mysql = require('mysql');
 var config = require('config');
 var extensions = require('../../lib/extensions');
-var logger = require('@adexchangedevops/aeg-logger');
+var logger = require('@adexchange/aeg-logger');
 
 describe('extensions', function () {
 	describe('#testPoolProperties()', function () {
