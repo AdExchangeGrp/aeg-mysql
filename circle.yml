@@ -1,0 +1,15 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker info
+    - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+    - docker build -t adexchangegrp/$CIRCLE_PROJECT_REPONAME:$CIRCLE_SHA1 .
+
+test:
+  override:
+    - docker run -e MOCHA_FILE="/artifacts/test-results.xml" -v ${PWD}/artifacts:/artifacts adexchangegrp/$CIRCLE_PROJECT_REPONAME:$CIRCLE_SHA1 npm run build
+    - mkdir $CIRCLE_TEST_REPORTS/junit/
+    - cp $PWD/artifacts/test-results.xml $CIRCLE_TEST_REPORTS/junit/test-results.xml
