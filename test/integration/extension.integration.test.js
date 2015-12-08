@@ -1,18 +1,19 @@
 'use strict';
 
 require('should');
-var mysql = require('mysql');
 var config = require('config');
 var extensions = require('../../lib/extensions');
 var logger = require('@adexchange/aeg-logger');
 
 describe('extensions', function () {
+
 	describe('#testPoolProperties()', function () {
+
 		it('should return without error', function (done) {
 
 			var rdsConf = config.get('RDS');
 
-			var rdsPool = mysql.createPool({
+			var rdsPool = extensions.createPool({
 				connectionLimit: 100,
 				host: rdsConf.host,
 				user: rdsConf.user,
@@ -29,14 +30,16 @@ describe('extensions', function () {
 
 			done();
 		});
+
 	});
 
 	describe.skip('#queryStream()', function () {
+
 		it('should return without error', function (done) {
 
 			var rdsConf = config.get('RDS');
 
-			var rdsPool = mysql.createPool({
+			var rdsPool = extensions.createPool({
 				connectionLimit: 100,
 				host: rdsConf.host,
 				user: rdsConf.user,
@@ -58,5 +61,7 @@ describe('extensions', function () {
 					done(err);
 				});
 		});
+
 	});
+
 });
