@@ -13,3 +13,9 @@ test:
     - docker run -e MOCHA_FILE="/artifacts/test-results.xml" -v ${PWD}/artifacts:/artifacts adexchangegrp/$CIRCLE_PROJECT_REPONAME:$CIRCLE_SHA1 npm run build
     - mkdir $CIRCLE_TEST_REPORTS/junit/
     - cp $PWD/artifacts/test-results.xml $CIRCLE_TEST_REPORTS/junit/test-results.xml
+
+deployment:
+  npm:
+    branch: master
+    commands:
+      - docker run adexchangegrp/$CIRCLE_PROJECT_REPONAME:$CIRCLE_SHA1 npm run patch

@@ -3,7 +3,6 @@
 require('should');
 var config = require('config');
 var extensions = require('../../lib/extensions');
-var logger = require('@adexchange/aeg-logger');
 
 describe('extensions', function () {
 
@@ -54,7 +53,7 @@ describe('extensions', function () {
 
 			extensions.queryStream(rdsPool, 'select * from transaction limit 1', null,
 				function (record, callback) {
-					logger.info(record);
+					console.log(record);
 					callback();
 				},
 				function (err) {
