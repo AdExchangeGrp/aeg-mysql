@@ -1,0 +1,11 @@
+RDS:
+  host: ""
+  user: ""
+  password: ""
+  port: 3306
+  db: "hitpath_import"
+  tableImportState: "hitpath_import"
+  tableImportMergeState: "hitpath_import_merge"
+  tableLandingPages: "hitpath_landing_pages"
+  tableAffiliates: "hitpath_affiliates"
+  clientId: "node_hitpath_importer"
