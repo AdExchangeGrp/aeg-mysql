@@ -1,6 +1,6 @@
 {
   "name": "@adexchange/aeg-mysql",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "dependencies": {
     "abbrev": {
       "version": "1.0.7",
