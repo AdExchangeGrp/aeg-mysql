@@ -2,7 +2,7 @@
   "name": "@adexchange/aeg-mysql",
   "version": "0.0.22",
   "description": "Mysql driver",
-  "main": "./lib/extensions.js",
+  "main": "./lib/index.js",
   "author": "Justin Durham",
   "repository": {
     "type": "git",
@@ -10,28 +10,39 @@
   },
   "license": "UNLICENSED",
   "scripts": {
-    "test": "mocha --recursive test/",
-    "test:coverage": "istanbul cover _mocha -- --recursive test/",
-    "jshint": "jshint .",
-    "jshint:watch": "npm run jshint && onchange \"**/*.js\" \".jshint*\" -- npm run jshint",
-    "dev": "parallelshell \"npm run jshint:watch\"",
-    "build": "npm run jshint && mocha --recursive --reporter mocha-junit-reporter test/unit/",
-    "patch": "git reset --hard HEAD && git clean -fd && npm version patch -m \"[ci skip] %s\" && git push origin master && git push origin master --tags && npm publish"
+    "test": "mocha --recursive --compilers js:babel-core/register test/",
+    "test:coverage": "istanbul cover _mocha -- --recursive --compilers js:babel-core/register test/",
+    "eslint": "eslint .",
+    "eslint:watch": "npm run eslint && onchange \"**/*.js\" \".eslint*\" -- npm run eslint",
+    "compile": "babel -d ./lib/ ./src/",
+    "build": "npm run eslint && npm run compile && istanbul cover _mocha -- --recursive --compilers js:babel-core/register --reporter mocha-junit-reporter test/unit",
+    "patch": "git reset --hard HEAD && git clean -fd && npm run compile && npm version patch -m \"[ci skip] %s\" && git push origin master && git push origin master --tags && npm publish"
   },
   "devDependencies": {
+    "babel-cli": "^6.1.18",
+    "babel-core": "^6.14.0",
+    "babel-eslint": "^6.1.2",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-preset-es2015": "^6.14.0",
+    "babel-preset-stage-3": "^6.11.0",
+    "babel-runtime": "^6.11.6",
+    "eslint": "^3.5.0",
+    "eslint-config-standard": "^6.0.1",
+    "eslint-plugin-promise": "^2.0.1",
+    "eslint-plugin-standard": "^2.0.0",
     "istanbul": "^0.3.17",
     "mocha": "^2.2.5",
     "mocha-junit-reporter": "^1.9.1",
     "onchange": "^1.1.0",
-    "parallelshell": "^1.1.1",
     "should": "^5.2.0"
   },
   "dependencies": {
-    "async": "^0.9.0",
-    "config": "^1.12.0",
-    "mysql": "^2.5.5",
-    "terminus": "^1.0.12",
-    "underscore": "^1.8.2"
+    "@adexchange/aeg-common": "0.0.21",
+    "bluebird": "^3.4.6",
+    "config": "^1.21.0",
+    "lodash": "^4.16.4",
+    "mysql": "^2.11.1",
+    "terminus": "^1.1.0"
   },
   "engine": "node >= 4.1.0"
 }
