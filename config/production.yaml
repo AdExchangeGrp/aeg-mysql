@@ -1,11 +1,6 @@
-RDS:
-  host: "aedb.crg9xjuvtppr.us-west-2.rds.amazonaws.com"
+aeg-mysql:
+  host: "aedbreporting.crg9xjuvtppr.us-west-2.rds.amazonaws.com"
   user: "hitpath_import"
   password: "!Mp0rt"
   port: 3306
   db: "hitpath_import"
-  tableImportState: "hitpath_import"
-  tableImportMergeState: "hitpath_import_merge"
-  tableLandingPages: "hitpath_landing_pages"
-  tableAffiliates: "hitpath_affiliates"
-  clientId: "node_hitpath_importer"
