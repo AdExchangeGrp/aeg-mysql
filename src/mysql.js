@@ -2,11 +2,12 @@ import mysql from 'mysql';
 import Promise from 'bluebird';
 import terminus from 'terminus';
 import _ from 'lodash';
+import { Base } from '@adexchange/aeg-common';
 
 /**
  * Manages MySQL
  */
-class MySQL {
+class MySQL extends Base {
 
 	/**
 	 * Constructor
@@ -14,6 +15,7 @@ class MySQL {
 	 */
 	constructor (options) {
 
+		super(options);
 		this._pool = mysql.createPool(options);
 		Promise.promisifyAll(this._pool);
 
@@ -52,6 +54,8 @@ class MySQL {
 			return result;
 
 		} catch (ex) {
+
+			this.error('query', {message: 'query error', err: ex});
 
 			connection.release();
 

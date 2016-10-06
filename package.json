@@ -37,6 +37,7 @@
     "should": "^5.2.0"
   },
   "dependencies": {
+    "@adexchange/aeg-common": "0.0.21",
     "bluebird": "^3.4.6",
     "config": "^1.21.0",
     "lodash": "^4.16.4",

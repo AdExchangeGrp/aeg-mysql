@@ -1,12 +1,16 @@
 import MySQL from '../../src/mysql';
 import config from 'config';
 import should from 'should';
+import LoggerMock from './logger-mock';
+
+const logger = new LoggerMock();
 
 const rdsConf = config.get('aeg-mysql');
 
 describe('MySQL', async () => {
 
 	const mysql = new MySQL({
+		logger,
 		connectionLimit: 10,
 		host: rdsConf.host,
 		user: rdsConf.user,
