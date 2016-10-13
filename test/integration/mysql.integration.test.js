@@ -2,6 +2,7 @@ import MySQL from '../../src/mysql';
 import config from 'config';
 import should from 'should';
 import LoggerMock from './logger-mock';
+import _ from 'lodash';
 
 const logger = new LoggerMock();
 
@@ -9,7 +10,7 @@ const rdsConf = config.get('aeg-mysql');
 
 describe('MySQL', async () => {
 
-	const mysql = new MySQL({
+	const options = {
 		logger,
 		connectionLimit: 10,
 		host: rdsConf.host,
@@ -21,9 +22,11 @@ describe('MySQL', async () => {
 		waitForConnections: true,
 		queueLimit: 0,
 		timezone: 'Z'
-	});
+	};
 
-	it('should return without error', async () => {
+	const mysql = new MySQL(options);
+
+	it('tables', async () => {
 
 		const result = await mysql.tables('hitpath_import');
 		should.exist(result);
@@ -32,7 +35,7 @@ describe('MySQL', async () => {
 
 	});
 
-	it('should return without error', async () => {
+	it('query', async () => {
 
 		const result = await mysql.query('SELECT * FROM hitpath_affiliates LIMIT 10');
 		should.exist(result);
@@ -41,7 +44,7 @@ describe('MySQL', async () => {
 
 	});
 
-	it('should return without error', async () => {
+	it('queryAll', async () => {
 
 		const result = await mysql.queryAll('hitpath_import', 'hitpath_affiliates');
 		should.exist(result);
@@ -50,7 +53,7 @@ describe('MySQL', async () => {
 
 	});
 
-	it('should return without error', async () => {
+	it('queryStream', async () => {
 
 		await mysql.queryStream('SELECT * FROM hitpath_affiliates LIMIT 10', (record) => {
 
@@ -60,7 +63,7 @@ describe('MySQL', async () => {
 
 	});
 
-	it('should return without error', async () => {
+	it('count', async () => {
 
 		const result = await mysql.count('hitpath_import', 'hitpath_affiliates');
 		should.exist(result);
@@ -71,9 +74,32 @@ describe('MySQL', async () => {
 
 	});
 
-	it('should return without error', async () => {
+	it('writeRecord', async () => {
 
 		await mysql.writeRecord('node_test', 'test_1', {id: Math.random(), name: 'test'});
+
+	});
+
+	it('withConnection', async () => {
+
+		// noinspection JSCheckFunctionSignatures
+		await MySQL.withConnection(async (mysql) => {
+
+			const result = await mysql.queryAll('hitpath_import', 'hitpath_affiliates');
+			should.exist(result);
+
+		}, options);
+
+	});
+
+	it('withConnection and no autocommit', async () => {
+
+		await MySQL.withConnection(async (mysql) => {
+
+			const result = await mysql.queryAll('hitpath_import', 'hitpath_affiliates');
+			should.exist(result);
+
+		}, _.extend({noAutoCommit: true}, options));
 
 	});
 

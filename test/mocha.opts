@@ -1,2 +1,2 @@
---timeout 240000
+--timeout 2400000
 --require should
