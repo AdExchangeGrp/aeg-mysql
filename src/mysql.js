@@ -123,23 +123,20 @@ class MySQL extends Base {
 		try {
 
 			const queryAsync = Promise.promisify(connection.query, {context: connection});
-			const result = await queryAsync(connection.format(query, queryArgs));
-
-			await this._releaseConnection(connection);
-
-			return result;
+			return queryAsync(connection.format(query, queryArgs));
 
 		} catch (ex) {
 
-			this.error('query', {message: 'query error', err: ex});
+			this.error('query', {err: ex});
+			throw ex;
+
+		} finally {
 
 			if (!options.connection) {
 
 				await this._releaseConnection(connection);
 
 			}
-
-			throw ex;
 
 		}
 
@@ -331,20 +328,30 @@ class MySQL extends Base {
 	async _writeRecordInternal (db, table, record, usePoolTz, options = {}) {
 
 		const connection = await this._resolveConnection(options);
-		// noinspection JSCheckFunctionSignatures
-		const query = usePoolTz
-			? connection.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record])
-			: mysql.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record]);
-		const queryAsync = Promise.promisify(connection.query, {context: connection});
-		const results = await queryAsync(query);
 
-		if (!options.connection) {
+		try {
 
-			await this._releaseConnection(connection);
+			// noinspection JSCheckFunctionSignatures
+			const query = usePoolTz
+				? connection.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record])
+				: mysql.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record]);
+			const queryAsync = Promise.promisify(connection.query, {context: connection});
+			return queryAsync(query);
+
+		} catch (ex) {
+
+			this.error('_writeRecordInternal', {err: ex});
+			throw ex;
+
+		} finally {
+
+			if (!options.connection) {
+
+				await this._releaseConnection(connection);
+
+			}
 
 		}
-
-		return results;
 
 	}
 

@@ -93,9 +93,11 @@ describe('MySQL', async () => {
 
 		await mysql.withTransaction(async (connection) => {
 
+			await mysql.query('select * from node_test.test_1', [], {connection});
 			await mysql.writeRecord('node_test', 'test_1', {id: 2, name: 'test2'}, {connection});
 			await mysql.writeRecord('node_test', 'test_1', {id: 3, name: 'test3'}, {connection});
 			await mysql.writeRecord('node_test', 'test_1', {id: 4, name: 'test4'}, {connection});
+			await mysql.query('select * from node_test.test_1', [], {connection});
 
 		});
 
