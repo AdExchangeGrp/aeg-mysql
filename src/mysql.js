@@ -30,6 +30,18 @@ class MySQL extends Base {
 
 		}
 
+		this._isDisposed = false;
+
+	}
+
+	/**
+	 * Is this instance disposed
+	 * @returns {boolean}
+	 */
+	get disposed () {
+
+		return this._isDisposed;
+
 	}
 
 	/**
@@ -269,6 +281,8 @@ class MySQL extends Base {
 	 * Dispose the connection when not using a pool
 	 */
 	async dispose () {
+
+		this._isDisposed = true;
 
 		if (this._connection) {
 
