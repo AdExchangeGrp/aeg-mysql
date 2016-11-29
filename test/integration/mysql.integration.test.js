@@ -132,6 +132,55 @@ describe('MySQL', async () => {
 
 	});
 
+	it('clear test', async () => {
+
+		await mysql.query('truncate table node_test.test_1');
+
+	});
+
+	it('withTransaction static - success', async () => {
+
+		await MySQL.withTransaction(async (mysql, connection) => {
+
+			await mysql.query('select * from node_test.test_1', [], {connection});
+			await mysql.writeRecord('node_test', 'test_1', {id: 1, name: 'test2'}, {connection});
+			await mysql.writeRecord('node_test', 'test_1', {id: 2, name: 'test3'}, {connection});
+			await mysql.writeRecord('node_test', 'test_1', {id: 3, name: 'test4'}, {connection});
+			await mysql.query('select * from node_test.test_1', [], {connection});
+
+		}, options);
+
+		const result = await mysql.queryAll('node_test', 'test_1');
+		should.exist(result);
+		result.length.should.be.equal(3);
+
+	});
+
+	it('withTransaction static - fail', async () => {
+
+		try {
+
+			await MySQL.withTransaction(async (mysql, connection) => {
+
+				await mysql.writeRecord('node_test', 'test_1', {id: 4, name: 'test5'}, {connection});
+				await mysql.writeRecord('node_test', 'test_1', {id: 5, name: 'test6'}, {connection});
+				await mysql.writeRecord('node_test', 'test_1', {id: 6, name: 'test7'}, {connection});
+				throw new Error('kill it');
+
+			}, options);
+
+		} catch (ex) {
+
+			// should be invoked
+
+		}
+
+		const result = await mysql.queryAll('node_test', 'test_1');
+		should.exist(result);
+		result.length.should.be.equal(3);
+
+	});
+
 	it('withConnection', async () => {
 
 		await MySQL.withConnection(async (mysql) => {

@@ -77,6 +77,41 @@ class MySQL extends Base {
 	/**
 	 * Perform queries within a transaction
 	 * @param {function} delegate
+	 * @param {Object} [options]
+	 */
+	static async withTransaction (delegate, options = {}) {
+
+		const params = _.cloneDeep(options);
+		params.noPool = true;
+
+		const mysql = new MySQL(params);
+
+		const begin = Promise.promisify(mysql._connection.beginTransaction, {context: mysql._connection});
+		await begin();
+
+		try {
+
+			await delegate(mysql, mysql._connection);
+			const commit = Promise.promisify(mysql._connection.commit, {context: mysql._connection});
+			await commit();
+
+		} catch (ex) {
+
+			const rollback = Promise.promisify(mysql._connection.rollback, {context: mysql._connection});
+			await rollback();
+			throw ex;
+
+		} finally {
+
+			await mysql.dispose();
+
+		}
+
+	}
+
+	/**
+	 * Perform queries within a transaction
+	 * @param {function} delegate
 	 */
 	async withTransaction (delegate) {
 
