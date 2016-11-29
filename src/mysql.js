@@ -13,9 +13,9 @@ class MySQL extends Base {
 	 * Constructor
 	 * @param {Object} [options]
 	 */
-	constructor (options) {
+	constructor (options = {}) {
 
-		const params = _.cloneDeep(options || {});
+		const params = _.cloneDeep(options);
 
 		super(params);
 
@@ -37,9 +37,9 @@ class MySQL extends Base {
 	 * @param {function} delegate
 	 * @param {{noAutoCommit: boolean}} [options]
 	 */
-	static async withConnection (delegate, options) {
+	static async withConnection (delegate, options = {}) {
 
-		const params = _.cloneDeep(options || {});
+		const params = _.cloneDeep(options);
 		params.noPool = true;
 
 		const mysql = new MySQL(params);
@@ -63,12 +63,44 @@ class MySQL extends Base {
 	}
 
 	/**
+	 * Perform queries within a transaction
+	 * @param {function} delegate
+	 */
+	async withTransaction (delegate) {
+
+		const connection = await this._resolveConnection();
+
+		const begin = Promise.promisify(connection.beginTransaction, {context: connection});
+		await begin();
+
+		try {
+
+			await delegate(connection);
+			const commit = Promise.promisify(connection.commit, {context: connection});
+			await commit();
+
+		} catch (ex) {
+
+			const rollback = Promise.promisify(connection.rollback, {context: connection});
+			await rollback();
+			throw ex;
+
+		} finally {
+
+			await this._releaseConnection(connection);
+
+		}
+
+	}
+
+	/**
 	 * Get the tables in the db
+	 * @param {Object} [options]
 	 * @param {string} db
 	 */
-	async tables (db) {
+	async tables (db, options = {}) {
 
-		const result = await this.query('SHOW FULL TABLES IN ?? WHERE Table_Type = \'BASE TABLE\'', [db]);
+		const result = await this.query('SHOW FULL TABLES IN ?? WHERE Table_Type = \'BASE TABLE\'', [db], options);
 		return _.map(result, (result) => {
 
 			return _.values(result)[0];
@@ -80,17 +112,18 @@ class MySQL extends Base {
 	/**
 	 * Query
 	 * @param {string} query
+	 * @param {Object[]} queryArgs
 	 * @param {Object} [options]
 	 * @return {Object[]}
 	 */
-	async query (query, options) {
+	async query (query, queryArgs = [], options = {}) {
 
-		const connection = await this._resolveConnection();
+		const connection = await this._resolveConnection(options);
 
 		try {
 
 			const queryAsync = Promise.promisify(connection.query, {context: connection});
-			const result = await queryAsync(connection.format(query, options));
+			const result = await queryAsync(connection.format(query, queryArgs));
 
 			await this._releaseConnection(connection);
 
@@ -100,7 +133,11 @@ class MySQL extends Base {
 
 			this.error('query', {message: 'query error', err: ex});
 
-			await this._releaseConnection(connection);
+			if (!options.connection) {
+
+				await this._releaseConnection(connection);
+
+			}
 
 			throw ex;
 
@@ -112,10 +149,11 @@ class MySQL extends Base {
 	 * Query all the records
 	 * @param {string} db
 	 * @param {string} table
+	 * @param {Object} [options]
 	 */
-	async queryAll (db, table) {
+	async queryAll (db, table, options = {}) {
 
-		return this.query('SELECT * FROM ??.??', [db, table]);
+		return this.query('SELECT * FROM ??.??', [db, table], options);
 
 	}
 
@@ -125,11 +163,11 @@ class MySQL extends Base {
 	 * @param {function} delegate
 	 * @param {Object} [options]
 	 */
-	async queryStream (query, delegate, options) {
+	async queryStream (query, delegate, options = {}) {
 
 		const self = this;
 
-		const connection = await self._resolveConnection();
+		const connection = await self._resolveConnection(options);
 
 		return new Promise((resolve, reject) => {
 
@@ -164,11 +202,15 @@ class MySQL extends Base {
 				})
 				.on('finish', () => {
 
-					self._releaseConnection(connection).catch((ex) => {
+					if (!options.connection) {
 
-						this.error('queryStream', {message: 'error releasing connection', err: ex});
+						self._releaseConnection(connection).catch((ex) => {
 
-					});
+							this.error('queryStream', {message: 'error releasing connection', err: ex});
+
+						});
+
+					}
 
 					if (streamErr) {
 
@@ -191,10 +233,11 @@ class MySQL extends Base {
 	 * @param {string} db
 	 * @param {string} table
 	 * @return {number}
+	 * @param {Object} [options]
 	 */
-	async count (db, table) {
+	async count (db, table, options = {}) {
 
-		const result = await this.query('SELECT COUNT (1) AS c FROM ??.??', [db, table]);
+		const result = await this.query('SELECT COUNT (1) AS c FROM ??.??', [db, table], options);
 		return result[0].c;
 
 	}
@@ -204,10 +247,11 @@ class MySQL extends Base {
 	 * @param {string} db
 	 * @param {string} table
 	 * @param {Object} record
+	 * @param {Object} [options]
 	 */
-	async writeRecord (db, table, record) {
+	async writeRecord (db, table, record, options = {}) {
 
-		return this._writeRecordInternal(db, table, record, true);
+		return this._writeRecordInternal(db, table, record, true, options);
 
 	}
 
@@ -216,10 +260,11 @@ class MySQL extends Base {
 	 * @param {string} db
 	 * @param {string} table
 	 * @param {Object} record
+	 * @param {Object} [options]
 	 */
-	async writeRecordNoLocale (db, table, record) {
+	async writeRecordNoLocale (db, table, record, options = {}) {
 
-		return this._writeRecordInternal(db, table, record, false);
+		return this._writeRecordInternal(db, table, record, false, options);
 
 	}
 
@@ -233,16 +278,27 @@ class MySQL extends Base {
 			const end = Promise.promisify(this._connection.end, {context: this._connection});
 			await end();
 
+		} else {
+
+			await this._pool.endAsync();
+
 		}
 
 	}
 
 	/**
 	 * Resolve the connection via pool or static connection
+	 * @param {Object} [options]
 	 * @return {Connection|*}
 	 * @private
 	 */
-	async _resolveConnection () {
+	async _resolveConnection (options = {}) {
+
+		if (options.connection) {
+
+			return options.connection;
+
+		}
 
 		return this._connection ? this._connection : await this._pool.getConnectionAsync();
 
@@ -269,18 +325,25 @@ class MySQL extends Base {
 	 * @param {string} table
 	 * @param {Object} record
 	 * @param {Boolean} usePoolTz
+	 * @param {Object} [options]
 	 * @private
 	 */
-	async _writeRecordInternal (db, table, record, usePoolTz) {
+	async _writeRecordInternal (db, table, record, usePoolTz, options = {}) {
 
-		const connection = await this._resolveConnection();
+		const connection = await this._resolveConnection(options);
 		// noinspection JSCheckFunctionSignatures
 		const query = usePoolTz
 			? connection.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record])
 			: mysql.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record]);
 		const queryAsync = Promise.promisify(connection.query, {context: connection});
 		const results = await queryAsync(query);
-		await this._releaseConnection(connection);
+
+		if (!options.connection) {
+
+			await this._releaseConnection(connection);
+
+		}
+
 		return results;
 
 	}
