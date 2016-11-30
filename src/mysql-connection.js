@@ -10,7 +10,7 @@ class MySQLConnection extends MySQL {
 
 	/**
 	 * Constructor
-	 * @param {Object} [options]
+	 * @param {{connection: Object}} [options]
 	 */
 	constructor (options = {}) {
 
@@ -105,6 +105,7 @@ class MySQLConnection extends MySQL {
 
 		} finally {
 
+			// do not close the connection if its not managed here
 			if (!options.connection) {
 
 				await mysqlConnection.dispose();
@@ -194,24 +195,12 @@ class MySQLConnection extends MySQL {
 	}
 
 	/**
-	 * Saves by upsert a record using date-times with the client locale
-	 * @param {string} db
-	 * @param {string} table
-	 * @param {Object} record
-	 */
-	async writeRecordNoLocale (db, table, record) {
-
-		return actions.writeRecordNoLocale(this._connection, db, table, record);
-
-	}
-
-	/**
 	 * Dispose the connection
 	 */
 	async dispose () {
 
 		await super.dispose();
-		await actions.end(this._connection);
+		await actions.dispose(this._connection);
 
 	}
 

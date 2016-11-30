@@ -120,20 +120,6 @@ class MySQLPooled extends MySQL {
 	}
 
 	/**
-	 * Saves by upsert a record using datetimes with the client locale
-	 * @param {string} db
-	 * @param {string} table
-	 * @param {Object} record
-	 */
-	async writeRecordNoLocale (db, table, record) {
-
-		const connection = await this._pool.getConnectionAsync();
-		await actions.writeRecordNoLocale(connection, db, table, record);
-		connection.release();
-
-	}
-
-	/**
 	 * Dispose the connection when not using a pool
 	 */
 	async dispose () {

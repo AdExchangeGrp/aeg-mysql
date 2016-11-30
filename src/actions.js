@@ -1,4 +1,3 @@
-import mysql from 'mysql';
 import Promise from 'bluebird';
 import terminus from 'terminus';
 import _ from 'lodash';
@@ -45,7 +44,7 @@ export default {
 	 * End a connection
 	 * @param {Object} connection
 	 */
-	async end (connection) {
+	async dispose (connection) {
 
 		const end = Promise.promisify(connection.end, {context: connection});
 		await end();
@@ -175,20 +174,9 @@ export default {
 	 */
 	async writeRecord (connection, db, table, record) {
 
-		return _writeRecordInternal(connection, db, table, record, true);
-
-	},
-
-	/**
-	 * Saves by upsert a record using date-times with the client locale
-	 * @param {Object} connection
-	 * @param {string} db
-	 * @param {string} table
-	 * @param {Object} record
-	 */
-	async writeRecordNoLocale (connection, db, table, record) {
-
-		return _writeRecordInternal(connection, db, table, record, false);
+		const query = connection.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record]);
+		const queryAsync = Promise.promisify(connection.query, {context: connection});
+		return queryAsync(query);
 
 	},
 
@@ -216,23 +204,3 @@ export default {
 	}
 
 };
-
-/**
- * Saves by upsert a record
- * @param {Object} connection
- * @param {string} db
- * @param {string} table
- * @param {Object} record
- * @param {Boolean} useConnectionTz
- * @private
- */
-async function _writeRecordInternal (connection, db, table, record, useConnectionTz) {
-
-	// noinspection JSCheckFunctionSignatures
-	const query = useConnectionTz
-		? connection.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record])
-		: mysql.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record]);
-	const queryAsync = Promise.promisify(connection.query, {context: connection});
-	return queryAsync(query);
-
-}
