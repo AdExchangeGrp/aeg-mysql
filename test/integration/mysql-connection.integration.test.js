@@ -1,10 +1,10 @@
-import MySQL from '../../src/mysql';
+import MySQLConnection from '../../src/mysql-connection';
 import config from 'config';
 import should from 'should';
 import LoggerMock from './logger-mock';
 import _ from 'lodash';
 
-describe('MySQL', async () => {
+describe('MySQLConnection', async () => {
 
 	let mysql = null;
 	let options = null;
@@ -27,7 +27,7 @@ describe('MySQL', async () => {
 			timezone: 'Z'
 		};
 
-		mysql = new MySQL(options);
+		mysql = new MySQLConnection(options);
 
 	});
 
@@ -87,72 +87,27 @@ describe('MySQL', async () => {
 
 		await mysql.writeRecord('node_test', 'test_1', {id: 0, name: 'test'});
 
-	});
-
-	it('withTransaction - success', async () => {
-
-		await mysql.withTransaction(async (connection) => {
-
-			await mysql.query('select * from node_test.test_1', [], {connection});
-			await mysql.writeRecord('node_test', 'test_1', {id: 2, name: 'test2'}, {connection});
-			await mysql.writeRecord('node_test', 'test_1', {id: 3, name: 'test3'}, {connection});
-			await mysql.writeRecord('node_test', 'test_1', {id: 4, name: 'test4'}, {connection});
-			await mysql.query('select * from node_test.test_1', [], {connection});
-
-		});
-
 		const result = await mysql.queryAll('node_test', 'test_1');
 		should.exist(result);
-		result.length.should.be.equal(4);
-
-	});
-
-	it('withTransaction - fail', async () => {
-
-		try {
-
-			await mysql.withTransaction(async (connection) => {
-
-				await mysql.writeRecord('node_test', 'test_1', {id: 5, name: 'test5'}, {connection});
-				await mysql.writeRecord('node_test', 'test_1', {id: 6, name: 'test6'}, {connection});
-				await mysql.writeRecord('node_test', 'test_1', {id: 7, name: 'test7'}, {connection});
-				throw new Error('kill it');
-
-			});
-
-		} catch (ex) {
-
-			// should be invoked
-
-		}
-
-		const result = await mysql.queryAll('node_test', 'test_1');
-		should.exist(result);
-		result.length.should.be.equal(4);
-
-	});
-
-	it('clear test', async () => {
-
-		await mysql.query('truncate table node_test.test_1');
+		result.length.should.be.equal(1);
 
 	});
 
 	it('withTransaction static - success', async () => {
 
-		await MySQL.withTransaction(async (mysql, connection) => {
+		await MySQLConnection.withTransaction(async (mysql) => {
 
-			await mysql.query('select * from node_test.test_1', [], {connection});
-			await mysql.writeRecord('node_test', 'test_1', {id: 1, name: 'test2'}, {connection});
-			await mysql.writeRecord('node_test', 'test_1', {id: 2, name: 'test3'}, {connection});
-			await mysql.writeRecord('node_test', 'test_1', {id: 3, name: 'test4'}, {connection});
-			await mysql.query('select * from node_test.test_1', [], {connection});
+			await mysql.query('select * from node_test.test_1');
+			await mysql.writeRecord('node_test', 'test_1', {id: 1, name: 'test2'});
+			await mysql.writeRecord('node_test', 'test_1', {id: 2, name: 'test3'});
+			await mysql.writeRecord('node_test', 'test_1', {id: 3, name: 'test4'});
+			await mysql.query('select * from node_test.test_1');
 
 		}, options);
 
 		const result = await mysql.queryAll('node_test', 'test_1');
 		should.exist(result);
-		result.length.should.be.equal(3);
+		result.length.should.be.equal(4);
 
 	});
 
@@ -160,11 +115,11 @@ describe('MySQL', async () => {
 
 		try {
 
-			await MySQL.withTransaction(async (mysql, connection) => {
+			await MySQLConnection.withTransaction(async (mysql) => {
 
-				await mysql.writeRecord('node_test', 'test_1', {id: 4, name: 'test5'}, {connection});
-				await mysql.writeRecord('node_test', 'test_1', {id: 5, name: 'test6'}, {connection});
-				await mysql.writeRecord('node_test', 'test_1', {id: 6, name: 'test7'}, {connection});
+				await mysql.writeRecord('node_test', 'test_1', {id: 4, name: 'test5'});
+				await mysql.writeRecord('node_test', 'test_1', {id: 5, name: 'test6'});
+				await mysql.writeRecord('node_test', 'test_1', {id: 6, name: 'test7'});
 				throw new Error('kill it');
 
 			}, options);
@@ -177,13 +132,13 @@ describe('MySQL', async () => {
 
 		const result = await mysql.queryAll('node_test', 'test_1');
 		should.exist(result);
-		result.length.should.be.equal(3);
+		result.length.should.be.equal(4);
 
 	});
 
 	it('withConnection', async () => {
 
-		await MySQL.withConnection(async (mysql) => {
+		await MySQLConnection.withConnection(async (mysql) => {
 
 			const result = await mysql.queryAll('hitpath_import', 'hitpath_affiliates');
 			should.exist(result);
@@ -194,7 +149,7 @@ describe('MySQL', async () => {
 
 	it('withConnection and no autocommit', async () => {
 
-		await MySQL.withConnection(async (mysql) => {
+		await MySQLConnection.withConnection(async (mysql) => {
 
 			const result = await mysql.queryAll('hitpath_import', 'hitpath_affiliates');
 			should.exist(result);
