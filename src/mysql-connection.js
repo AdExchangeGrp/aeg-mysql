@@ -70,7 +70,7 @@ class MySQLConnection extends MySQL {
 
 		}
 
-		await Promise.resolve(delegate(mysqlConnection));
+		const result = await Promise.resolve(delegate(mysqlConnection));
 
 		if (options.noAutoCommit) {
 
@@ -79,6 +79,8 @@ class MySQLConnection extends MySQL {
 		}
 
 		await mysqlConnection.dispose();
+
+		return result;
 
 	}
 
