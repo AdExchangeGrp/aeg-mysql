@@ -18,7 +18,7 @@ describe('MySQLPooled', async () => {
 			host: rdsConf.host,
 			user: rdsConf.user,
 			password: rdsConf.password,
-			database: rdsConf.db,
+			database: 'hitpath',
 			insecureAuth: true,
 			acquireTimeout: 120000,
 			waitForConnections: true,
@@ -38,28 +38,28 @@ describe('MySQLPooled', async () => {
 
 	it('tables', async () => {
 
-		const result = await mysql.tables('hitpath_import');
+		const result = await mysql.tables('hitpath');
 		should.exist(result);
 
 	});
 
 	it('query', async () => {
 
-		const result = await mysql.query('SELECT * FROM hitpath_affiliates LIMIT 10');
+		const result = await mysql.query('SELECT * FROM hits_sales LIMIT 10');
 		should.exist(result);
 
 	});
 
 	it('queryAll', async () => {
 
-		const result = await mysql.queryAll('hitpath_import', 'hitpath_affiliates');
+		const result = await mysql.queryAll('hitpath', 'state');
 		should.exist(result);
 
 	});
 
 	it('queryStream', async () => {
 
-		await mysql.queryStream('SELECT * FROM hitpath_affiliates LIMIT 10', (record) => {
+		await mysql.queryStream('SELECT * FROM hits_sales LIMIT 10', (record) => {
 
 			should.exist(record);
 
@@ -69,7 +69,7 @@ describe('MySQLPooled', async () => {
 
 	it('count', async () => {
 
-		const result = await mysql.count('hitpath_import', 'hitpath_affiliates');
+		const result = await mysql.count('hitpath', 'state');
 		should.exist(result);
 		result.should.be.a.Number;
 		result.should.be.greaterThan(0);

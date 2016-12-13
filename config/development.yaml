@@ -1,6 +1,5 @@
 aeg-mysql:
-  host: "aedbreporting.crg9xjuvtppr.us-west-2.rds.amazonaws.com"
-  user: "hitpath_import"
-  password: "!Mp0rt"
+  host: "camp-ci-cluster.cluster-crg9xjuvtppr.us-west-2.rds.amazonaws.com"
+  user: "node_test"
+  password: "f3w3trdgfd4"
   port: 3306
-  db: "hitpath_import"
