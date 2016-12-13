@@ -56,12 +56,24 @@ class MySQLConnection extends MySQL {
 	}
 
 	/**
+	 * Format a query using the underlying connection
+	 * @param {string} query
+	 * @param {Object[]} [args]
+	 */
+	format (query, args) {
+
+		return this._connection.format(query, args);
+
+	}
+
+	/**
 	 * Perform queries on a connection
 	 * @param {function} delegate
 	 * @param {{noAutoCommit: boolean}} [options]
 	 */
 	static async withConnection (delegate, options = {}) {
 
+		// noinspection JSCheckFunctionSignatures
 		const mysqlConnection = new MySQLConnection(options);
 
 		if (options.noAutoCommit) {
