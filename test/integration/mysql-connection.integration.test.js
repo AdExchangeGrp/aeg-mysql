@@ -37,6 +37,13 @@ describe('MySQLConnection', async () => {
 
 	});
 
+	it('test', async () => {
+
+		const result = await mysql.tables('hitpath');
+		should.exist(result);
+
+	});
+
 	it('tables', async () => {
 
 		const result = await mysql.tables('hitpath');
