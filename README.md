@@ -1,8 +1,10 @@
-# README #
+# aeg-mysql #
+
+#### This is a fork of [https://www.npmjs.com/package/mysql](mysql)
 
 ### What is this repository for? ###
 
-MySQL client
+Wrapper of the MySQL client that provides better support for connection pools and wrapper large numbers of queries.
 
 ### How do I get set up? ###
 
