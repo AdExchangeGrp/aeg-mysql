@@ -42,7 +42,7 @@ export default {
 	 */
 	async dispose (connection: IConnection): Promise<void> {
 
-		const end = BBPromise.promisify(connection.end, {context: connection});
+		const end: any = BBPromise.promisify(connection.end, {context: connection});
 		await end();
 
 	},
