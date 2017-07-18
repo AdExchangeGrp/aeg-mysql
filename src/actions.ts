@@ -103,18 +103,27 @@ export default {
 
 					connection.pause();
 
-					Promise.resolve(delegate(row))
-						.then(() => {
+					try {
 
-							connection.resume();
+						Promise.resolve(delegate(row))
+							.then(() => {
 
-						})
-						.catch((ex) => {
+								connection.resume();
 
-							streamErr = ex;
-							connection.resume();
+							})
+							.catch((ex) => {
 
-						});
+								streamErr = ex;
+								connection.resume();
+
+							});
+
+					} catch (ex) {
+
+						streamErr = ex;
+						connection.resume();
+
+					}
 
 				})
 				.on('end', () => {

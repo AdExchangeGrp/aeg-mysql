@@ -57,7 +57,7 @@ describe('MySQLConnection', async () => {
 
 	it('queryStream', async () => {
 
-		await mysql!.queryStream('SELECT * FROM affiliates LIMIT 10', (record) => {
+		await mysql!.queryStream('SELECT * FROM affiliates LIMIT 10',(record) => {
 
 			should.exist(record);
 
