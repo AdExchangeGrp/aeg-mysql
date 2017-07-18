@@ -1,0 +1,41 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/aeg-mysql
+    docker:
+      - image: adexchangegrp/node6-build:latest
+    steps:
+      - checkout
+      - restore_cache:
+          key: node_modules-{{ checksum "package.json" }}
+      - run:
+          name: npm install
+          command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && npm install
+      - save_cache:
+          key: node_modules-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+
+      - run:
+          name: lint
+          command: npm run lint
+      - run:
+          name: compile
+          command: npm run compile
+      - run:
+          name: test
+          command: npm run build:coverage
+
+      - deploy:
+          name: deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              git config --global user.email $GIT_EMAIL
+              git config --global user.name $GIT_USER
+              npm run patch
+            fi
+
+      - store_artifacts:
+          path: test-results.xml
+      - store_artifacts:
+          path: coverage
