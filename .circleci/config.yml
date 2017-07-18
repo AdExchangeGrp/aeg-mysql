@@ -1,7 +1,7 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/aeg-redis
+    working_directory: ~/aeg-mysql
     docker:
       - image: adexchangegrp/node6-build:latest
     steps:
