@@ -5,9 +5,10 @@ import { Base } from '@adexchange/aeg-common';
  */
 class MySQL extends Base {
 
+	private _isDisposed: boolean;
+
 	/**
 	 * Constructor
-	 * @param {Object} [options]
 	 */
 	constructor (options = {}) {
 
@@ -19,9 +20,8 @@ class MySQL extends Base {
 
 	/**
 	 * Is this instance disposed
-	 * @returns {boolean}
 	 */
-	get disposed () {
+	get disposed (): boolean {
 
 		return this._isDisposed;
 
@@ -30,7 +30,7 @@ class MySQL extends Base {
 	/**
 	 * Dispose
 	 */
-	async dispose () {
+	public async dispose (): Promise<void> {
 
 		this._isDisposed = true;
 
