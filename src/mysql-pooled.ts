@@ -1,5 +1,5 @@
-import mysql from 'mysql';
-import Promise from 'bluebird';
+import * as mysql from 'mysql';
+import * as BBPromise from 'bluebird';
 import MySQL from './mysql';
 import MySQLConnection from './mysql-connection';
 import actions from './actions';
@@ -9,16 +9,17 @@ import actions from './actions';
  */
 class MySQLPooled extends MySQL {
 
+	private _pool: any;
+
 	/**
 	 * Constructor
-	 * @param {Object} [options]
 	 */
 	constructor (options = {}) {
 
 		super(options);
 
 		this._pool = mysql.createPool(options);
-		Promise.promisifyAll(this._pool);
+		BBPromise.promisifyAll(this._pool);
 
 	}
 
@@ -26,7 +27,7 @@ class MySQLPooled extends MySQL {
 	 * Perform queries within a transaction
 	 * @param {function} delegate
 	 */
-	async withTransaction (delegate) {
+	public async withTransaction (delegate: (connection: MySQLConnection) => Promise<void> | void): Promise<void> {
 
 		const connection = await this._pool.getConnectionAsync();
 		await MySQLConnection.withTransaction(delegate, {connection});
@@ -36,9 +37,8 @@ class MySQLPooled extends MySQL {
 
 	/**
 	 * Get the tables in the db
-	 * @param {string} db
 	 */
-	async tables (db) {
+	public async tables (db: string): Promise<string[]> {
 
 		const connection = await this._pool.getConnectionAsync();
 		const result = actions.tables(connection, db);
@@ -49,11 +49,8 @@ class MySQLPooled extends MySQL {
 
 	/**
 	 * Query
-	 * @param {string} query
-	 * @param {Object[]} queryArgs
-	 * @return {Object[]}
 	 */
-	async query (query, queryArgs = []) {
+	public async query (query: string, queryArgs: Array<string | number> = []): Promise<any[]> {
 
 		const connection = await this._pool.getConnectionAsync();
 		const result = actions.query(connection, query, queryArgs);
@@ -64,10 +61,8 @@ class MySQLPooled extends MySQL {
 
 	/**
 	 * Query all the records
-	 * @param {string} db
-	 * @param {string} table
 	 */
-	async queryAll (db, table) {
+	public async queryAll (db: string, table: string): Promise<any[]> {
 
 		const connection = await this._pool.getConnectionAsync();
 		const result = actions.queryAll(connection, db, table);
@@ -77,12 +72,12 @@ class MySQLPooled extends MySQL {
 	}
 
 	/**
-	 * Query
-	 * @param {string} query
-	 * @param {function} delegate
-	 * @param {Object} [queryArgs]
+	 * Query stream
 	 */
-	async queryStream (query, delegate, queryArgs = []) {
+	public async queryStream (
+		query: string,
+		delegate: (record) => Promise<void> | void,
+		queryArgs: Array<number | string> = []): Promise<void> {
 
 		const connection = await this._pool.getConnectionAsync();
 		await actions.queryStream(connection, query, delegate, queryArgs);
@@ -91,12 +86,9 @@ class MySQLPooled extends MySQL {
 	}
 
 	/**
-	 * Count
-	 * @param {string} db
-	 * @param {string} table
-	 * @return {number}
+	 * Count all the records in a table
 	 */
-	async count (db, table) {
+	public async count (db: string, table: string): Promise<number> {
 
 		const connection = await this._pool.getConnectionAsync();
 		const result = await actions.count(connection, db, table);
@@ -107,11 +99,8 @@ class MySQLPooled extends MySQL {
 
 	/**
 	 * Saves by upsert a record converting datetimes to the locale set on the timezone of the server
-	 * @param {string} db
-	 * @param {string} table
-	 * @param {Object} record
 	 */
-	async writeRecord (db, table, record) {
+	public async writeRecord (db: string, table: string, record: any): Promise<void> {
 
 		const connection = await this._pool.getConnectionAsync();
 		await actions.writeRecord(connection, db, table, record);
@@ -122,7 +111,7 @@ class MySQLPooled extends MySQL {
 	/**
 	 * Dispose the connection when not using a pool
 	 */
-	async dispose () {
+	public async dispose (): Promise<void> {
 
 		await super.dispose();
 		await this._pool.endAsync();
