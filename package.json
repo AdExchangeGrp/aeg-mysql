@@ -1,67 +1,67 @@
 {
-	"name": "@adexchange/aeg-mysql",
-	"version": "0.0.16",
-	"description": "Mysql driver",
-	"main": "./lib/index.js",
-	"author": "Ad Exchange Group",
-	"repository": {
-		"type": "git",
-		"url": "git://git@bitbucket.org:AdExchangeGrp/aeg-mysql.git"
-	},
-	"license": "UNLICENSED",
-	"scripts": {
-		"test": "mocha --recursive --compilers ts:ts-node/register test/**/*.ts",
-		"test:coverage": "nyc npm run test",
-		"lint": "tslint src/**/*.ts",
-		"lint:watch": "npm run tslint && onchange \"**/*.ts\" \"tslint.json\" -- npm run lint",
-		"compile": "tsc",
-		"compile:watch": "npm run compile -- --watch",
-		"dev": "npm run compile:watch",
-		"build:test": "mocha --recursive --compilers ts:ts-node/register --reporter mocha-junit-reporter test/unit/**/*.ts",
-		"build:coverage": "nyc npm run build:test",
-		"patch": "git reset --hard HEAD && git clean -fd && npm run compile && npm version patch -m \"[ci skip] %s\" && git push origin master && git push origin master --tags && npm publish"
-	},
-	"nyc": {
-		"include": [
-			"src/**/*.ts"
-		],
-		"exclude": [
-			"**/*.d.ts"
-		],
-		"extension": [
-			".ts"
-		],
-		"require": [
-			"ts-node/register"
-		],
-		"reporter": [
-			"json",
-			"html"
-		],
-		"all": true
-	},
-	"devDependencies": {
-		"@types/bluebird": "^3.5.8",
-		"@types/config": "0.0.32",
-		"@types/lodash": "^4.14.70",
-		"@types/mocha": "^2.2.41",
-		"@types/mysql": "0.0.34",
-		"@types/node": "^6.0.0",
-		"mocha": "^3.2.0",
-		"mocha-junit-reporter": "^1.13.0",
-		"nyc": "^11.0.3",
-		"onchange": "^3.2.1",
-		"should": "^11.2.0",
-		"ts-node": "^3.2.0",
-		"tslint": "^5.5.0",
-		"typescript": "^2.4.1"
-	},
-	"dependencies": {
-		"@adexchange/aeg-common": "0.0.46",
-		"bluebird": "^3.4.7",
-		"config": "^1.25.1",
-		"lodash": "^4.17.4",
-		"mysql": "^2.13.0"
-	},
-	"engine": "node >= 6.10.0"
+  "name": "@adexchange/aeg-mysql",
+  "version": "0.0.16",
+  "description": "Mysql driver",
+  "main": "./lib/index.js",
+  "author": "Ad Exchange Group",
+  "repository": {
+    "type": "git",
+    "url": "git://git@bitbucket.org:AdExchangeGrp/aeg-mysql.git"
+  },
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "mocha --recursive --compilers ts:ts-node/register test/**/*.ts",
+    "test:coverage": "nyc npm run test",
+    "lint": "tslint src/**/*.ts",
+    "lint:watch": "npm run tslint && onchange \"**/*.ts\" \"tslint.json\" -- npm run lint",
+    "compile": "tsc",
+    "compile:watch": "npm run compile -- --watch",
+    "dev": "npm run compile:watch",
+    "build:test": "mocha --recursive --compilers ts:ts-node/register --reporter mocha-junit-reporter test/unit/**/*.ts",
+    "build:coverage": "nyc npm run build:test",
+    "patch": "git reset --hard HEAD && git clean -fd && npm run compile && npm version patch -m \"[ci skip] %s\" && git push origin master && git push origin master --tags && npm publish"
+  },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "**/*.d.ts"
+    ],
+    "extension": [
+      ".ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ],
+    "reporter": [
+      "json",
+      "html"
+    ],
+    "all": true
+  },
+  "devDependencies": {
+    "@types/bluebird": "^3.5.8",
+    "@types/config": "0.0.32",
+    "@types/lodash": "^4.14.70",
+    "@types/mocha": "^2.2.41",
+    "@types/mysql": "0.0.34",
+    "@types/node": "^6.0.0",
+    "mocha": "^3.2.0",
+    "mocha-junit-reporter": "^1.13.0",
+    "nyc": "^11.0.3",
+    "onchange": "^3.2.1",
+    "should": "^11.2.0",
+    "ts-node": "^3.2.0",
+    "tslint": "^5.5.0",
+    "typescript": "^2.4.1"
+  },
+  "dependencies": {
+    "@adexchange/aeg-common": "0.0.46",
+    "bluebird": "^3.4.7",
+    "config": "^1.25.1",
+    "lodash": "^4.17.4",
+    "mysql": "^2.13.0"
+  },
+  "engine": "node >= 6.10.0"
 }
