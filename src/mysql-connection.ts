@@ -1,21 +1,11 @@
 import * as mysql from 'mysql';
 import MySQL from './mysql';
 import actions from './actions';
-import { IConnection } from 'mysql';
+import { IConnection, IConnectionConfig } from 'mysql';
 
-export interface IConnectionOptions {
-	connection?: IConnection;
+export interface IConnectionOptions extends IConnectionConfig {
 	noAutoCommit?: boolean;
-	host?: string;
-	user?: string;
-	password?: string;
-	database?: string;
-	connectionLimit?: number;
-	insecureAuth?: true;
-	acquireTimeout?: number;
-	waitForConnections?: boolean;
-	queueLimit?: number;
-	timezone?: string;
+	connection?: IConnection;
 }
 
 /**
