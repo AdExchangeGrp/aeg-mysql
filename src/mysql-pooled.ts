@@ -5,7 +5,6 @@ import MySQLConnection from './mysql-connection';
 import actions from './actions';
 import { IPoolConfig as IMySQLPoolConfig } from 'mysql';
 
-// noinspection TsLint
 export interface IPoolConfig extends IMySQLPoolConfig {
 
 }
