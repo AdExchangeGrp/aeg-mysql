@@ -3,6 +3,7 @@ import * as BBPromise from 'bluebird';
 import MySQL from './mysql';
 import MySQLConnection from './mysql-connection';
 import actions from './actions';
+import { IPoolConfig } from 'mysql';
 
 /**
  * Manages MySQL
@@ -14,7 +15,7 @@ class MySQLPooled extends MySQL {
 	/**
 	 * Constructor
 	 */
-	constructor (options = {}) {
+	constructor (options: IPoolConfig = {}) {
 
 		super(options);
 
