@@ -3,7 +3,11 @@ import * as BBPromise from 'bluebird';
 import MySQL from './mysql';
 import MySQLConnection from './mysql-connection';
 import actions from './actions';
-import { IPoolConfig } from 'mysql';
+import { IPoolConfig as IMySQLPoolConfig } from 'mysql';
+
+export interface IPoolConfig extends IMySQLPoolConfig {
+
+}
 
 /**
  * Manages MySQL
@@ -15,7 +19,7 @@ class MySQLPooled extends MySQL {
 	/**
 	 * Constructor
 	 */
-	constructor (options: IPoolConfig = {}) {
+	constructor (options: IPoolConfig) {
 
 		super(options);
 

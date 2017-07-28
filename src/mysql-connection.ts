@@ -1,21 +1,11 @@
 import * as mysql from 'mysql';
 import MySQL from './mysql';
 import actions from './actions';
-import { IConnection } from 'mysql';
+import { IConnection, IConnectionConfig as IMySQLConnectionConfig } from 'mysql';
 
-export interface IConnectionOptions {
-	connection?: IConnection;
+export interface IConnectionConfig extends IMySQLConnectionConfig {
 	noAutoCommit?: boolean;
-	host?: string;
-	user?: string;
-	password?: string;
-	database?: string;
-	connectionLimit?: number;
-	insecureAuth?: true;
-	acquireTimeout?: number;
-	waitForConnections?: boolean;
-	queueLimit?: number;
-	timezone?: string;
+	connection?: IConnection;
 }
 
 /**
@@ -30,7 +20,7 @@ class MySQLConnection extends MySQL {
 	 */
 	public static async withConnection (
 		delegate: (connection: MySQLConnection) => Promise<any> | any,
-		options: IConnectionOptions = {}): Promise<any> {
+		options: IConnectionConfig = {}): Promise<any> {
 
 		// noinspection JSCheckFunctionSignatures
 		const mysqlConnection = new MySQLConnection(options);
@@ -62,7 +52,7 @@ class MySQLConnection extends MySQL {
 	 */
 	public static async withTransaction (
 		delegate: (connection: MySQLConnection) => Promise<void> | void,
-		options: IConnectionOptions = {}): Promise<void> {
+		options: IConnectionConfig = {}): Promise<void> {
 
 		const mysqlConnection = new MySQLConnection(options);
 
@@ -96,7 +86,7 @@ class MySQLConnection extends MySQL {
 	/**
 	 * Constructor
 	 */
-	constructor (options: IConnectionOptions = {}) {
+	constructor (options: IConnectionConfig) {
 
 		super(options);
 
