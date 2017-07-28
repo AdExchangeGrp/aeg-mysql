@@ -1,28 +1,25 @@
-import MySQLPooled from '../../src/mysql-pooled';
+import MySQLPooled, { IPoolConfig } from '../../src/mysql-pooled';
 import * as config from 'config';
 import * as should from 'should';
-import { IConnectionOptions } from "../../src/mysql-connection";
 
 describe('MySQLPooled', async () => {
 
 	let mysql: MySQLPooled | null = null;
-	let options: IConnectionOptions | null = null;
+	const rdsConf: any = config.get('aeg-mysql');
+	let options: IPoolConfig = {
+		connectionLimit: 10,
+		host: rdsConf.host,
+		user: rdsConf.user,
+		password: rdsConf.password,
+		database: 'hitpath',
+		insecureAuth: true,
+		acquireTimeout: 120000,
+		waitForConnections: true,
+		queueLimit: 0,
+		timezone: 'Z'
+	};
 
 	before(() => {
-
-		const rdsConf: any = config.get('aeg-mysql');
-		options = {
-			connectionLimit: 10,
-			host: rdsConf.host,
-			user: rdsConf.user,
-			password: rdsConf.password,
-			database: 'hitpath',
-			insecureAuth: true,
-			acquireTimeout: 120000,
-			waitForConnections: true,
-			queueLimit: 0,
-			timezone: 'Z'
-		};
 
 		mysql = new MySQLPooled(options);
 

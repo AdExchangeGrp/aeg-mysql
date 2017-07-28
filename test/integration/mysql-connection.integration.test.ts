@@ -1,4 +1,4 @@
-import MySQLConnection, { IConnectionOptions } from '../../src/mysql-connection';
+import MySQLConnection, { IConnectionConfig } from '../../src/mysql-connection';
 import * as config from 'config';
 import * as should from 'should';
 import * as _ from 'lodash';
@@ -6,23 +6,17 @@ import * as _ from 'lodash';
 describe('MySQLConnection', async () => {
 
 	let mysql: MySQLConnection | null = null;
-	let options: IConnectionOptions | null = null;
+	const rdsConf: any = config.get('aeg-mysql');
+	let options: IConnectionConfig = {
+		host: rdsConf.host,
+		user: rdsConf.user,
+		password: rdsConf.password,
+		database: 'hitpath',
+		insecureAuth: true,
+		timezone: 'Z'
+	};
 
 	before(() => {
-
-		const rdsConf: any = config.get('aeg-mysql');
-		options = {
-			connectionLimit: 10,
-			host: rdsConf.host,
-			user: rdsConf.user,
-			password: rdsConf.password,
-			database: 'hitpath',
-			insecureAuth: true,
-			acquireTimeout: 120000,
-			waitForConnections: true,
-			queueLimit: 0,
-			timezone: 'Z'
-		};
 
 		mysql = new MySQLConnection(options);
 
