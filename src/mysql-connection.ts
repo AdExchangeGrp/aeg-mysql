@@ -15,8 +15,6 @@ class MySQLConnection extends MySQL {
 
 	/**
 	 * Perform queries on a connection
-	 * @param {function} delegate
-	 * @param {{noAutoCommit: boolean}} [options]
 	 */
 	public static async withConnection (
 		delegate: (connection: MySQLConnection) => Promise<any> | any,
@@ -47,8 +45,6 @@ class MySQLConnection extends MySQL {
 
 	/**
 	 * Perform queries within a transaction
-	 * @param {function} delegate
-	 * @param {Object} [options]
 	 */
 	public static async withTransaction (
 		delegate: (connection: MySQLConnection) => Promise<void> | void,

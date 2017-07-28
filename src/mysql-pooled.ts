@@ -30,7 +30,6 @@ class MySQLPooled extends MySQL {
 
 	/**
 	 * Perform queries within a transaction
-	 * @param {function} delegate
 	 */
 	public async withTransaction (delegate: (connection: MySQLConnection) => Promise<void> | void): Promise<void> {
 
