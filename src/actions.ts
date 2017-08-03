@@ -64,7 +64,7 @@ export default {
 	/**
 	 * Query
 	 */
-	async query (connection: IConnection, query: string, queryArgs: Array<number | string> = []): Promise<any[]> {
+	async query (connection: IConnection, query: string, queryArgs: any[] = []): Promise<any[]> {
 
 		const queryAsync: any = BBPromise.promisify(connection.query, {context: connection});
 		return queryAsync(connection.format(query, queryArgs));
