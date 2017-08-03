@@ -54,7 +54,7 @@ class MySQLPooled extends MySQL {
 	/**
 	 * Query
 	 */
-	public async query (query: string, queryArgs: Array<string | number> = []): Promise<any[]> {
+	public async query (query: string, queryArgs: any[] = []): Promise<any[]> {
 
 		const connection = await this._pool.getConnectionAsync();
 		const result = actions.query(connection, query, queryArgs);
