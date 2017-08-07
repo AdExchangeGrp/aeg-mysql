@@ -6,6 +6,7 @@ import { IConnection, IConnectionConfig as IMySQLConnectionConfig } from 'mysql'
 export interface IConnectionConfig extends IMySQLConnectionConfig {
 	noAutoCommit?: boolean;
 	connection?: IConnection;
+	mysql?: mysql.IMySql;
 }
 
 /**
@@ -92,7 +93,8 @@ class MySQLConnection extends MySQL {
 
 		} else {
 
-			this._connection = mysql.createConnection(options);
+			const context = options.mysql ? options.mysql : mysql;
+			this._connection = context.createConnection(options);
 
 		}
 
