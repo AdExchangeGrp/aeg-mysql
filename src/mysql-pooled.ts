@@ -6,7 +6,7 @@ import actions from './actions';
 import { IPoolConfig as IMySQLPoolConfig } from 'mysql';
 
 export interface IPoolConfig extends IMySQLPoolConfig {
-
+	mysql?: mysql.IMySql;
 }
 
 /**
@@ -23,7 +23,8 @@ class MySQLPooled extends MySQL {
 
 		super(options);
 
-		this._pool = mysql.createPool(options);
+		const context = options.mysql ? options.mysql : mysql;
+		this._pool = context.createPool(options);
 		BBPromise.promisifyAll(this._pool);
 
 	}
