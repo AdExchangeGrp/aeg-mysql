@@ -1,15 +1,10 @@
 import { Base } from '@adexchange/aeg-common';
+import { IMySqlQueryable } from './types';
 
-/**
- * MySQL
- */
-class MySQL extends Base {
+export abstract class MySQL extends Base implements IMySqlQueryable {
 
 	private _isDisposed: boolean;
 
-	/**
-	 * Constructor
-	 */
 	constructor (options = {}) {
 
 		super(options);
@@ -18,24 +13,18 @@ class MySQL extends Base {
 
 	}
 
-	/**
-	 * Is this instance disposed
-	 */
 	get disposed (): boolean {
 
 		return this._isDisposed;
 
 	}
 
-	/**
-	 * Dispose
-	 */
 	public async dispose (): Promise<void> {
 
 		this._isDisposed = true;
 
 	}
 
-}
+	public abstract query (query: string, queryArgs?: any[]): Promise<any[]>;
 
-export default MySQL;
+}

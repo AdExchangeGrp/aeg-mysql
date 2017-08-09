@@ -1,6 +1,6 @@
 import * as mysql from 'mysql';
 import * as BBPromise from 'bluebird';
-import MySQL from './mysql';
+import { MySQL } from './mysql';
 import MySQLConnection from './mysql-connection';
 import actions from './actions';
 import { IPoolConfig as IMySQLPoolConfig } from 'mysql';
@@ -9,16 +9,10 @@ export interface IPoolConfig extends IMySQLPoolConfig {
 	mysql?: mysql.IMySql;
 }
 
-/**
- * Manages MySQL
- */
-class MySQLPooled extends MySQL {
+export default class MySQLPooled extends MySQL {
 
 	private _pool: any;
 
-	/**
-	 * Constructor
-	 */
 	constructor (options: IPoolConfig) {
 
 		super(options);
@@ -29,9 +23,6 @@ class MySQLPooled extends MySQL {
 
 	}
 
-	/**
-	 * Perform queries within a transaction
-	 */
 	public async withTransaction (delegate: (connection: MySQLConnection) => Promise<void> | void): Promise<void> {
 
 		const connection = await this._pool.getConnectionAsync();
@@ -40,9 +31,6 @@ class MySQLPooled extends MySQL {
 
 	}
 
-	/**
-	 * Get the tables in the db
-	 */
 	public async tables (db: string): Promise<string[]> {
 
 		const connection = await this._pool.getConnectionAsync();
@@ -52,9 +40,6 @@ class MySQLPooled extends MySQL {
 
 	}
 
-	/**
-	 * Query
-	 */
 	public async query (query: string, queryArgs: any[] = []): Promise<any[]> {
 
 		const connection = await this._pool.getConnectionAsync();
@@ -64,9 +49,6 @@ class MySQLPooled extends MySQL {
 
 	}
 
-	/**
-	 * Query all the records
-	 */
 	public async queryAll (db: string, table: string): Promise<any[]> {
 
 		const connection = await this._pool.getConnectionAsync();
@@ -76,9 +58,6 @@ class MySQLPooled extends MySQL {
 
 	}
 
-	/**
-	 * Query stream
-	 */
 	public async queryStream (
 		query: string,
 		delegate: (record) => Promise<void> | void,
@@ -90,9 +69,6 @@ class MySQLPooled extends MySQL {
 
 	}
 
-	/**
-	 * Count all the records in a table
-	 */
 	public async count (db: string, table: string): Promise<number> {
 
 		const connection = await this._pool.getConnectionAsync();
@@ -102,9 +78,6 @@ class MySQLPooled extends MySQL {
 
 	}
 
-	/**
-	 * Saves by upsert a record converting datetimes to the locale set on the timezone of the server
-	 */
 	public async writeRecord (db: string, table: string, record: any): Promise<void> {
 
 		const connection = await this._pool.getConnectionAsync();
@@ -113,9 +86,6 @@ class MySQLPooled extends MySQL {
 
 	}
 
-	/**
-	 * Dispose the connection when not using a pool
-	 */
 	public async dispose (): Promise<void> {
 
 		await super.dispose();
@@ -124,5 +94,3 @@ class MySQLPooled extends MySQL {
 	}
 
 }
-
-export default MySQLPooled;
