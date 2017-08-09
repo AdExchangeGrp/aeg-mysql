@@ -40,6 +40,12 @@ export default class MySQLPooled extends MySQL {
 
 	}
 
+	public format (query: string, args: Array<string | number> = []): string {
+
+		return mysql.format(query, args);
+
+	}
+
 	public async query (query: string, queryArgs: any[] = []): Promise<any[]> {
 
 		const connection = await this._pool.getConnectionAsync();
