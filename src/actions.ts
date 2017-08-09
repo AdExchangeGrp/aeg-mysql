@@ -2,14 +2,8 @@ import * as BBPromise from 'bluebird';
 import * as _ from 'lodash';
 import { IConnection } from 'mysql';
 
-/**
- * MySQL actions
- */
 export default {
 
-	/**
-	 * Begin a transaction
-	 */
 	async begin (connection: IConnection): Promise<void> {
 
 		const begin: any = BBPromise.promisify(connection.beginTransaction, {context: connection});
@@ -17,9 +11,6 @@ export default {
 
 	},
 
-	/**
-	 * Commit a transaction
-	 */
 	async commit (connection: IConnection): Promise<void> {
 
 		const commit: any = BBPromise.promisify(connection.commit, {context: connection});
@@ -27,9 +18,6 @@ export default {
 
 	},
 
-	/**
-	 * Rollback a transaction
-	 */
 	async rollback (connection: IConnection): Promise<void> {
 
 		const rollback: any = BBPromise.promisify(connection.rollback, {context: connection});
@@ -37,9 +25,6 @@ export default {
 
 	},
 
-	/**
-	 * End a connection
-	 */
 	async dispose (connection: IConnection): Promise<void> {
 
 		const end: any = BBPromise.promisify(connection.end, {context: connection});
@@ -47,9 +32,6 @@ export default {
 
 	},
 
-	/**
-	 * Get the tables in the db
-	 */
 	async tables (connection: IConnection, db: string): Promise<string[]> {
 
 		const result = await this.query(connection, 'SHOW FULL TABLES IN ?? WHERE Table_Type = \'BASE TABLE\'', [db]);
@@ -61,9 +43,6 @@ export default {
 
 	},
 
-	/**
-	 * Query
-	 */
 	async query (connection: IConnection, query: string, queryArgs: any[] = []): Promise<any[]> {
 
 		const queryAsync: any = BBPromise.promisify(connection.query, {context: connection});
@@ -71,18 +50,12 @@ export default {
 
 	},
 
-	/**
-	 * Query all the records in a table
-	 */
 	async queryAll (connection: IConnection, db: string, table: string): Promise<any[]> {
 
 		return this.query(connection, 'SELECT * FROM ??.??', [db, table]);
 
 	},
 
-	/**
-	 * Query stream
-	 */
 	async queryStream (
 		connection: IConnection,
 		query: string,
@@ -144,9 +117,6 @@ export default {
 
 	},
 
-	/**
-	 * Count all the records in a table
-	 */
 	async count (connection: IConnection, db: string, table: string): Promise<number> {
 
 		const result = await this.query(connection, 'SELECT COUNT (1) AS c FROM ??.??', [db, table]);
@@ -154,9 +124,6 @@ export default {
 
 	},
 
-	/**
-	 * Saves by upsert a record converting datetimes to the locale set on the timezone of the server
-	 */
 	async writeRecord (connection: IConnection, db: string, table: string, record: any): Promise<void> {
 
 		const query = connection.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record]);
@@ -165,9 +132,6 @@ export default {
 
 	},
 
-	/**
-	 * Perform queries within a transaction
-	 */
 	async withTransaction (connection: IConnection, delegate: (connection: IConnection) => Promise<void>): Promise<void> {
 
 		await this.begin(connection);
