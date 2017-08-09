@@ -40,6 +40,13 @@ describe('MySQLPooled', async () => {
 
 	it('query', async () => {
 
+		const result = mysql!.format('SELECT * FROM hits_sales LIMIT 10');
+		should.exist(result);
+
+	});
+
+	it('query', async () => {
+
 		const result = await mysql!.query('SELECT * FROM hits_sales LIMIT 10');
 		should.exist(result);
 

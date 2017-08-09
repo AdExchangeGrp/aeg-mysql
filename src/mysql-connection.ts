@@ -106,7 +106,7 @@ class MySQLConnection extends MySQL {
 
 	}
 
-	public format (query: string, args: Array<string | number>): string {
+	public format (query: string, args: Array<string | number> = []): string {
 
 		return this._connection.format(query, args);
 
