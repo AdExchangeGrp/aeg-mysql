@@ -112,7 +112,7 @@ class MySQLConnection extends MySQL {
 
 	}
 
-	public format (query: string, args: Array<string | number> = []): string {
+	public format (query: string, args: any[] = []): string {
 
 		return this._connection.format(query, args);
 
@@ -139,7 +139,7 @@ class MySQLConnection extends MySQL {
 
 	}
 
-	public async queryWithArgs (query: string, args: Array<string | number>): Promise<any[]> {
+	public async queryWithArgs (query: string, args: any[]): Promise<any[]> {
 
 		return this.query(this.format(query, args));
 

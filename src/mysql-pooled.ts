@@ -43,7 +43,7 @@ export default class MySQLPooled extends MySQL {
 
 	}
 
-	public format (query: string, args: Array<string | number> = []): string {
+	public format (query: string, args: any[] = []): string {
 
 		return mysql.format(query, args);
 
@@ -58,7 +58,10 @@ export default class MySQLPooled extends MySQL {
 
 	}
 
-	public async queryWithArgs (query: string, args: Array<string | number>, options: IQueryOptions = {}): Promise<any[]> {
+	public async queryWithArgs (
+		query: string,
+		args: any[],
+		options: IQueryOptions = {}): Promise<any[]> {
 
 		return this.query(this.format(query, args), options);
 

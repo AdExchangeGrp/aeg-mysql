@@ -29,6 +29,9 @@ export abstract class MySQL extends Base implements IMySqlQueryable {
 
 	public abstract query (query: string, options?: IQueryOptions): Promise<any[]>;
 
-	public abstract queryWithArgs (query: string, args: Array<string | number>, options?: IQueryOptions): Promise<any[]>;
+	public abstract queryWithArgs (
+		query: string,
+		args: any[],
+		options?: IQueryOptions): Promise<any[]>;
 
 }
