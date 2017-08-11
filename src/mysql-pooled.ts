@@ -4,6 +4,7 @@ import { MySQL } from './mysql';
 import MySQLConnection from './mysql-connection';
 import actions from './actions';
 import { IPoolConfig as IMySQLPoolConfig } from 'mysql';
+import { IQueryOptions } from './types';
 
 export interface IPoolConfig extends IMySQLPoolConfig {
 	mysql?: mysql.IMySql;
@@ -23,18 +24,20 @@ export default class MySQLPooled extends MySQL {
 
 	}
 
-	public async withTransaction (delegate: (connection: MySQLConnection) => Promise<void> | void): Promise<void> {
+	public async withTransaction (
+		delegate: (connection: MySQLConnection) => Promise<void> | void,
+		options: IQueryOptions = {}): Promise<void> {
 
 		const connection = await this._pool.getConnectionAsync();
-		await MySQLConnection.withTransaction(delegate, {connection});
+		await MySQLConnection.withTransaction(delegate, Object.assign({}, {connection}, options));
 		connection.release();
 
 	}
 
-	public async tables (db: string): Promise<string[]> {
+	public async tables (db: string, options: IQueryOptions = {}): Promise<string[]> {
 
 		const connection = await this._pool.getConnectionAsync();
-		const result = actions.tables(connection, db);
+		const result = actions.tables(connection, db, options);
 		connection.release();
 		return result;
 
@@ -46,19 +49,25 @@ export default class MySQLPooled extends MySQL {
 
 	}
 
-	public async query (query: string, queryArgs: any[] = []): Promise<any[]> {
+	public async query (query: string, options: IQueryOptions = {}): Promise<any[]> {
 
 		const connection = await this._pool.getConnectionAsync();
-		const result = actions.query(connection, query, queryArgs);
+		const result = actions.query(connection, query, options);
 		connection.release();
 		return result;
 
 	}
 
-	public async queryAll (db: string, table: string): Promise<any[]> {
+	public async queryWithArgs (query: string, args: Array<string | number>, options: IQueryOptions = {}): Promise<any[]> {
+
+		return this.query(this.format(query, args), options);
+
+	}
+
+	public async queryAll (db: string, table: string, options: IQueryOptions = {}): Promise<any[]> {
 
 		const connection = await this._pool.getConnectionAsync();
-		const result = actions.queryAll(connection, db, table);
+		const result = actions.queryAll(connection, db, table, options);
 		connection.release();
 		return result;
 
@@ -70,24 +79,24 @@ export default class MySQLPooled extends MySQL {
 		queryArgs: Array<number | string> = []): Promise<void> {
 
 		const connection = await this._pool.getConnectionAsync();
-		await actions.queryStream(connection, query, delegate, queryArgs);
+		await actions.queryStream(connection, this.format(query, queryArgs), delegate);
 		connection.release();
 
 	}
 
-	public async count (db: string, table: string): Promise<number> {
+	public async count (db: string, table: string, options: IQueryOptions = {}): Promise<number> {
 
 		const connection = await this._pool.getConnectionAsync();
-		const result = await actions.count(connection, db, table);
+		const result = await actions.count(connection, db, table, options);
 		connection.release();
 		return result;
 
 	}
 
-	public async writeRecord (db: string, table: string, record: any): Promise<void> {
+	public async writeRecord (db: string, table: string, record: any, options: IQueryOptions = {}): Promise<void> {
 
 		const connection = await this._pool.getConnectionAsync();
-		await actions.writeRecord(connection, db, table, record);
+		await actions.writeRecord(connection, db, table, record, options);
 		connection.release();
 
 	}

@@ -1,67 +1,75 @@
-import MySQLConnection, { IConnectionConfig } from '../../src/mysql-connection';
+import MySQLConnection, { IConnectionConfig } from '../../../src/mysql-connection';
 import * as config from 'config';
 import * as should from 'should';
 import * as _ from 'lodash';
+import * as xray from 'aws-xray-sdk';
+import * as winston from 'winston';
+import Segment from 'aws-xray-sdk';
 
-describe('MySQLConnection', async () => {
+const mysql = xray.captureMySQL(require('mysql'));
 
-	let mysql: MySQLConnection | null = null;
+xray.setLogger(winston);
+
+xray.enableManualMode();
+
+let segment: Segment | null = null;
+let options: IConnectionConfig | null;
+let mysqlConnection: MySQLConnection | null = null;
+
+before(async () => {
+
+	segment = new xray.Segment('test kinesis');
+
 	const rdsConf: any = config.get('aeg-mysql');
-	let options: IConnectionConfig = {
+
+	options = {
 		host: rdsConf.host,
 		user: rdsConf.user,
 		password: rdsConf.password,
 		database: 'hitpath',
 		insecureAuth: true,
-		timezone: 'Z'
+		timezone: 'Z',
+		mysql,
+		segment
 	};
 
-	before(() => {
+	mysqlConnection = new MySQLConnection(options);
 
-		mysql = new MySQLConnection(options);
+});
 
-	});
+after(async () => {
 
-	after(async () => {
+	segment.close();
+	await mysqlConnection!.dispose();
 
-		await mysql!.dispose();
+});
 
-	});
+describe('MySQLConnection', async () => {
 
 	it('tables', async () => {
 
-		const result = await mysql!.tables('hitpath');
+		const result = await mysqlConnection!.tables('hitpath');
 		should.exist(result);
 
 	});
 
 	it('query', async () => {
 
-		const result = await mysql!.query('SELECT * FROM hits_sales LIMIT 10');
+		const result = await mysqlConnection!.query('SELECT * FROM hits_sales LIMIT 10');
 		should.exist(result);
 
 	});
 
 	it('queryAll', async () => {
 
-		const result = await mysql!.queryAll('hitpath', 'state');
+		const result = await mysqlConnection!.queryAll('hitpath', 'state');
 		should.exist(result);
-
-	});
-
-	it('queryStream', async () => {
-
-		await mysql!.queryStream('SELECT * FROM affiliates LIMIT 10', (record) => {
-
-			should.exist(record);
-
-		});
 
 	});
 
 	it('count', async () => {
 
-		const result = await mysql!.count('hitpath', 'state');
+		const result = await mysqlConnection!.count('hitpath', 'state');
 		should.exist(result);
 		should(result).be.instanceOf(Number);
 		should(result).be.greaterThan(0);
@@ -70,15 +78,15 @@ describe('MySQLConnection', async () => {
 
 	it('clear test', async () => {
 
-		await mysql!.query('truncate table node_test.test_1');
+		await mysqlConnection!.query('truncate table node_test.test_1');
 
 	});
 
 	it('writeRecord', async () => {
 
-		await mysql!.writeRecord('node_test', 'test_1', {id: 0, name: 'test'});
+		await mysqlConnection!.writeRecord('node_test', 'test_1', {id: 0, name: 'test'});
 
-		const result = await mysql!.queryAll('node_test', 'test_1');
+		const result = await mysqlConnection!.queryAll('node_test', 'test_1');
 		should.exist(result);
 		should(result.length).be.equal(1);
 
@@ -96,7 +104,7 @@ describe('MySQLConnection', async () => {
 
 		}, options!);
 
-		const result = await mysql!.queryAll('node_test', 'test_1');
+		const result = await mysqlConnection!.queryAll('node_test', 'test_1');
 		should.exist(result);
 		should(result.length).be.equal(4);
 
@@ -121,7 +129,7 @@ describe('MySQLConnection', async () => {
 
 		}
 
-		const result = await mysql!.queryAll('node_test', 'test_1');
+		const result = await mysqlConnection!.queryAll('node_test', 'test_1');
 		should.exist(result);
 		should(result.length).be.equal(4);
 
