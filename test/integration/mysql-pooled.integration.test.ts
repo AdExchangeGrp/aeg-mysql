@@ -1,4 +1,4 @@
-import MySQLPooled, { IPoolConfig } from '../../../src/mysql-pooled';
+import MySQLPooled, { IPoolConfig } from '../../src/mysql-pooled';
 import * as config from 'config';
 import * as should from 'should';
 import * as xray from 'aws-xray-sdk';

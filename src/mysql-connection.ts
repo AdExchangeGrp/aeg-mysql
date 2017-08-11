@@ -151,15 +151,6 @@ class MySQLConnection extends MySQL {
 
 	}
 
-	public async queryStream (
-		query: string,
-		delegate: (record) => Promise<void> | void,
-		queryArgs: Array<number | string> = []): Promise<void> {
-
-		return actions.queryStream(this._connection, this.format(query, queryArgs), delegate);
-
-	}
-
 	public async count (db: string, table: string): Promise<number> {
 
 		return actions.count(this._connection, db, table, {segment: this._segment});

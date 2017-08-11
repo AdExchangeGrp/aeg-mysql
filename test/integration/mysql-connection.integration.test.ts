@@ -1,4 +1,4 @@
-import MySQLConnection, { IConnectionConfig } from '../../../src/mysql-connection';
+import MySQLConnection, { IConnectionConfig } from '../../src/mysql-connection';
 import * as config from 'config';
 import * as should from 'should';
 import * as _ from 'lodash';

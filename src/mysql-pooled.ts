@@ -73,17 +73,6 @@ export default class MySQLPooled extends MySQL {
 
 	}
 
-	public async queryStream (
-		query: string,
-		delegate: (record) => Promise<void> | void,
-		queryArgs: Array<number | string> = []): Promise<void> {
-
-		const connection = await this._pool.getConnectionAsync();
-		await actions.queryStream(connection, this.format(query, queryArgs), delegate);
-		connection.release();
-
-	}
-
 	public async count (db: string, table: string, options: IQueryOptions = {}): Promise<number> {
 
 		const connection = await this._pool.getConnectionAsync();
