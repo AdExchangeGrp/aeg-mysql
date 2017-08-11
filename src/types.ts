@@ -9,6 +9,6 @@ export interface IMySqlQueryable {
 	query (query: string, options?: IQueryOptions): Promise<any[]>;
 	queryWithArgs (
 		query: string,
-		args: Array<string | number | null | undefined>,
+		args: any[],
 		options?: IQueryOptions): Promise<any[]>;
 }
