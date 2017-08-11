@@ -1,5 +1,5 @@
 import { Base } from '@adexchange/aeg-common';
-import { IMySqlQueryable } from './types';
+import { IMySqlQueryable, IQueryOptions } from './types';
 
 export abstract class MySQL extends Base implements IMySqlQueryable {
 
@@ -27,6 +27,8 @@ export abstract class MySQL extends Base implements IMySqlQueryable {
 
 	public abstract format (query: string, args: Array<string | number>): string;
 
-	public abstract query (query: string, queryArgs?: any[]): Promise<any[]>;
+	public abstract query (query: string, options?: IQueryOptions): Promise<any[]>;
+
+	public abstract queryWithArgs (query: string, args: Array<string | number>, options?: IQueryOptions): Promise<any[]>;
 
 }

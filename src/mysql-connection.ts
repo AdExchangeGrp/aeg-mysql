@@ -2,11 +2,13 @@ import * as mysql from 'mysql';
 import { MySQL } from './mysql';
 import actions from './actions';
 import { IConnection, IConnectionConfig as IMySQLConnectionConfig } from 'mysql';
+import Segment from 'aws-xray-sdk';
 
 export interface IConnectionConfig extends IMySQLConnectionConfig {
 	noAutoCommit?: boolean;
 	connection?: IConnection;
 	mysql?: mysql.IMySql;
+	segment?: Segment;
 }
 
 class MySQLConnection extends MySQL {
@@ -71,9 +73,13 @@ class MySQLConnection extends MySQL {
 
 	private _connection: IConnection;
 
+	private _segment: Segment;
+
 	constructor (options: IConnectionConfig) {
 
 		super(options);
+
+		this._segment = options.segment;
 
 		if (options.connection) {
 
@@ -90,19 +96,19 @@ class MySQLConnection extends MySQL {
 
 	public async begin (): Promise<void> {
 
-		return actions.begin(this._connection);
+		return actions.begin(this._connection, {segment: this._segment});
 
 	}
 
 	public async commit (): Promise<void> {
 
-		return actions.commit(this._connection);
+		return actions.commit(this._connection, {segment: this._segment});
 
 	}
 
 	public async rollback (): Promise<void> {
 
-		return actions.rollback(this._connection);
+		return actions.rollback(this._connection, {segment: this._segment});
 
 	}
 
@@ -114,15 +120,15 @@ class MySQLConnection extends MySQL {
 
 	public async tables (db: string): Promise<string[]> {
 
-		return actions.tables(this._connection, db);
+		return actions.tables(this._connection, db, {segment: this._segment});
 
 	}
 
-	public async query (query: string, queryArgs: any[] = []): Promise<any[]> {
+	public async query (query: string): Promise<any[]> {
 
 		try {
 
-			return actions.query(this._connection, query, queryArgs);
+			return actions.query(this._connection, query, {segment: this._segment});
 
 		} catch (ex) {
 
@@ -133,30 +139,27 @@ class MySQLConnection extends MySQL {
 
 	}
 
-	public async queryAll (db: string, table: string): Promise<any[]> {
+	public async queryWithArgs (query: string, args: Array<string | number>): Promise<any[]> {
 
-		return actions.queryAll(this._connection, db, table);
+		return this.query(this.format(query, args));
 
 	}
 
-	public async queryStream (
-		query: string,
-		delegate: (record) => Promise<void> | void,
-		queryArgs: Array<number | string> = []): Promise<void> {
+	public async queryAll (db: string, table: string): Promise<any[]> {
 
-		return actions.queryStream(this._connection, query, delegate, queryArgs);
+		return actions.queryAll(this._connection, db, table, {segment: this._segment});
 
 	}
 
 	public async count (db: string, table: string): Promise<number> {
 
-		return actions.count(this._connection, db, table);
+		return actions.count(this._connection, db, table, {segment: this._segment});
 
 	}
 
 	public async writeRecord (db: string, table: string, record: any): Promise<void> {
 
-		return actions.writeRecord(this._connection, db, table, record);
+		return actions.writeRecord(this._connection, db, table, record, {segment: this._segment});
 
 	}
 

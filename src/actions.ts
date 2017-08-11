@@ -1,27 +1,27 @@
 import * as BBPromise from 'bluebird';
 import * as _ from 'lodash';
 import { IConnection } from 'mysql';
+import promisifyQuery from './promisify-query';
+import { Segment } from 'aws-xray-sdk';
+import { IQueryOptions } from './types';
 
 export default {
 
-	async begin (connection: IConnection): Promise<void> {
+	async begin (connection: IConnection, options: IQueryOptions = {}): Promise<void> {
 
-		const begin: any = BBPromise.promisify(connection.beginTransaction, {context: connection});
-		await begin();
-
-	},
-
-	async commit (connection: IConnection): Promise<void> {
-
-		const commit: any = BBPromise.promisify(connection.commit, {context: connection});
-		await commit();
+		return promisifyQuery(connection, options.segment)('START TRANSACTION');
 
 	},
 
-	async rollback (connection: IConnection): Promise<void> {
+	async commit (connection: IConnection, options: IQueryOptions = {}): Promise<void> {
 
-		const rollback: any = BBPromise.promisify(connection.rollback, {context: connection});
-		await rollback();
+		return promisifyQuery(connection, options.segment)('COMMIT');
+
+	},
+
+	async rollback (connection: IConnection, options: IQueryOptions = {}): Promise<void> {
+
+		return promisifyQuery(connection, options.segment)('ROLLBACK');
 
 	},
 
@@ -32,9 +32,10 @@ export default {
 
 	},
 
-	async tables (connection: IConnection, db: string): Promise<string[]> {
+	async tables (connection: IConnection, db: string, options: IQueryOptions = {}): Promise<string[]> {
 
-		const result = await this.query(connection, 'SHOW FULL TABLES IN ?? WHERE Table_Type = \'BASE TABLE\'', [db]);
+		const query = connection.format('SHOW FULL TABLES IN ?? WHERE Table_Type = \'BASE TABLE\'', [db]);
+		const result = await this.query(connection, query, options);
 		return _.map(result, (r) => {
 
 			return _.values(r)[0];
@@ -43,30 +44,29 @@ export default {
 
 	},
 
-	async query (connection: IConnection, query: string, queryArgs: any[] = []): Promise<any[]> {
+	async query (connection: IConnection, query: string, options: IQueryOptions = {}): Promise<any[]> {
 
-		const queryAsync: any = BBPromise.promisify(connection.query, {context: connection});
-		return queryAsync(connection.format(query, queryArgs));
+		return promisifyQuery(connection, options.segment)(query);
 
 	},
 
-	async queryAll (connection: IConnection, db: string, table: string): Promise<any[]> {
+	async queryAll (connection: IConnection, db: string, table: string, options: IQueryOptions = {}): Promise<any[]> {
 
-		return this.query(connection, 'SELECT * FROM ??.??', [db, table]);
+		const query = connection.format('SELECT * FROM ??.??', [db, table]);
+		return this.query(connection, query, options);
 
 	},
 
 	async queryStream (
 		connection: IConnection,
 		query: string,
-		delegate: (record) => Promise<void> | void,
-		queryArgs: Array<number | string> = []): Promise<void> {
+		delegate: (record) => Promise<void> | void): Promise<void> {
 
 		return new Promise<void>((resolve, reject) => {
 
 			let streamErr;
 
-			connection.query(connection.format(query, queryArgs))
+			connection.query(query)
 				.on('error', (err) => {
 
 					streamErr = err;
@@ -117,18 +117,24 @@ export default {
 
 	},
 
-	async count (connection: IConnection, db: string, table: string): Promise<number> {
+	async count (connection: IConnection, db: string, table: string, options: IQueryOptions = {}): Promise<number> {
 
-		const result = await this.query(connection, 'SELECT COUNT (1) AS c FROM ??.??', [db, table]);
+		const query = connection.format('SELECT COUNT (1) AS c FROM ??.??', [db, table]);
+		const result = await this.query(connection, query, options);
 		return result[0].c;
 
 	},
 
-	async writeRecord (connection: IConnection, db: string, table: string, record: any): Promise<void> {
+	async writeRecord (
+		connection: IConnection,
+		db: string,
+		table: string,
+		record: any,
+		options: IQueryOptions = {}): Promise<void> {
 
-		const query = connection.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record]);
-		const queryAsync: any = BBPromise.promisify(connection.query, {context: connection});
-		return queryAsync(query);
+		return promisifyQuery
+		(connection, options.segment)
+		(connection.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record]));
 
 	},
 
