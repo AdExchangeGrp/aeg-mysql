@@ -1,4 +1,3 @@
-import * as BBPromise from 'bluebird';
 import { IConnection } from 'mysql';
 import { Segment } from 'aws-xray-sdk';
 import * as SqlData from 'aws-xray-sdk-core/lib/database/sql_data';
@@ -7,7 +6,7 @@ import { IPoolConfig } from 'mysql';
 export default (
 	connection: IConnection,
 	query: string,
-	segment?: Segment): BBPromise<any> => {
+	segment?: Segment): Promise<any> => {
 
 	if (segment) {
 
