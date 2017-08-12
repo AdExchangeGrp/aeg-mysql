@@ -15,7 +15,7 @@ let mysqlConnection: MySQLConnection | null = null;
 
 before(async () => {
 
-	segment = new xray.Segment('test kinesis');
+	segment = new xray.Segment('test');
 
 	const rdsConf: any = config.get('aeg-mysql');
 
