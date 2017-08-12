@@ -2,7 +2,6 @@ import * as BBPromise from 'bluebird';
 import * as _ from 'lodash';
 import { IConnection } from 'mysql';
 import queryWrapper from './query-wrapper';
-import { Segment } from 'aws-xray-sdk';
 import { IQueryOptions } from './types';
 
 export default {

@@ -2,12 +2,10 @@ import MySQLConnection, { IConnectionConfig } from '../../src/mysql-connection';
 import * as config from 'config';
 import * as should from 'should';
 import * as _ from 'lodash';
-import * as xray from 'aws-xray-sdk';
-import * as winston from 'winston';
-import Segment from 'aws-xray-sdk';
+import { Segment, XrayLogger } from '@adexchange/aeg-xray';
+import logger from '@adexchange/aeg-logger';
 
-xray.setLogger(winston);
-xray.enableManualMode();
+XrayLogger.initialize(logger);
 
 let segment: Segment | null = null;
 let options: IConnectionConfig | null;
@@ -15,7 +13,7 @@ let mysqlConnection: MySQLConnection | null = null;
 
 before(async () => {
 
-	segment = new xray.Segment('test');
+	segment = new Segment('test');
 
 	const rdsConf: any = config.get('aeg-mysql');
 
@@ -35,7 +33,7 @@ before(async () => {
 
 after(async () => {
 
-	segment.close();
+	segment!.close();
 	await mysqlConnection!.dispose();
 
 });
