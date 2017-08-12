@@ -7,7 +7,6 @@ import Segment from 'aws-xray-sdk';
 export interface IConnectionConfig extends IMySQLConnectionConfig {
 	noAutoCommit?: boolean;
 	connection?: IConnection;
-	mysql?: mysql.IMySql;
 	segment?: Segment;
 }
 
@@ -87,8 +86,7 @@ class MySQLConnection extends MySQL {
 
 		} else {
 
-			const context = options.mysql ? options.mysql : mysql;
-			this._connection = context.createConnection(options);
+			this._connection = mysql.createConnection(options);
 
 		}
 
@@ -142,12 +140,6 @@ class MySQLConnection extends MySQL {
 	public async queryWithArgs (query: string, args: any[]): Promise<any[]> {
 
 		return this.query(this.format(query, args));
-
-	}
-
-	public async queryAll (db: string, table: string): Promise<any[]> {
-
-		return actions.queryAll(this._connection, db, table, {segment: this._segment});
 
 	}
 

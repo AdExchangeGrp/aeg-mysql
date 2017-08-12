@@ -2,13 +2,9 @@ import * as mysql from 'mysql';
 import { MySQL } from './mysql';
 import MySQLConnection from './mysql-connection';
 import actions from './actions';
-import { IConnection, IPoolConfig as IMySQLPoolConfig } from 'mysql';
+import { IConnection, IPoolConfig } from 'mysql';
 import { IQueryOptions } from './types';
 import * as BBPromise from 'bluebird';
-
-export interface IPoolConfig extends IMySQLPoolConfig {
-	mysql?: mysql.IMySql;
-}
 
 export default class MySQLPooled extends MySQL {
 
@@ -18,8 +14,7 @@ export default class MySQLPooled extends MySQL {
 
 		super(options);
 
-		const context = options.mysql ? options.mysql : mysql;
-		this._pool = context.createPool(options);
+		this._pool = mysql.createPool(options);
 
 	}
 
@@ -63,15 +58,6 @@ export default class MySQLPooled extends MySQL {
 		options: IQueryOptions = {}): Promise<any[]> {
 
 		return this.query(this.format(query, args), options);
-
-	}
-
-	public async queryAll (db: string, table: string, options: IQueryOptions = {}): Promise<any[]> {
-
-		const connection = await this._getConnection();
-		const result = actions.queryAll(connection, db, table, options);
-		connection.release();
-		return result;
 
 	}
 

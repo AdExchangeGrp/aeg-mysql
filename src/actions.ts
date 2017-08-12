@@ -1,7 +1,7 @@
 import * as BBPromise from 'bluebird';
 import * as _ from 'lodash';
 import { IConnection } from 'mysql';
-import promisifyQuery from './promisify-query';
+import queryWrapper from './query-wrapper';
 import { Segment } from 'aws-xray-sdk';
 import { IQueryOptions } from './types';
 
@@ -9,19 +9,19 @@ export default {
 
 	async begin (connection: IConnection, options: IQueryOptions = {}): Promise<void> {
 
-		return promisifyQuery(connection, options.segment)('START TRANSACTION');
+		return queryWrapper(connection, 'START TRANSACTION', options.segment);
 
 	},
 
 	async commit (connection: IConnection, options: IQueryOptions = {}): Promise<void> {
 
-		return promisifyQuery(connection, options.segment)('COMMIT');
+		return queryWrapper(connection, 'COMMIT', options.segment);
 
 	},
 
 	async rollback (connection: IConnection, options: IQueryOptions = {}): Promise<void> {
 
-		return promisifyQuery(connection, options.segment)('ROLLBACK');
+		return queryWrapper(connection, 'ROLLBACK', options.segment);
 
 	},
 
@@ -46,74 +46,7 @@ export default {
 
 	async query (connection: IConnection, query: string, options: IQueryOptions = {}): Promise<any[]> {
 
-		return promisifyQuery(connection, options.segment)(query);
-
-	},
-
-	async queryAll (connection: IConnection, db: string, table: string, options: IQueryOptions = {}): Promise<any[]> {
-
-		const query = connection.format('SELECT * FROM ??.??', [db, table]);
-		return this.query(connection, query, options);
-
-	},
-
-	async queryStream (
-		connection: IConnection,
-		query: string,
-		delegate: (record) => Promise<void> | void): Promise<void> {
-
-		return new Promise<void>((resolve, reject) => {
-
-			let streamErr;
-
-			connection.query(query)
-				.on('error', (err) => {
-
-					streamErr = err;
-
-				})
-				.on('result', (row) => {
-
-					connection.pause();
-
-					try {
-
-						Promise.resolve(delegate(row))
-							.then(() => {
-
-								connection.resume();
-
-							})
-							.catch((ex) => {
-
-								streamErr = ex;
-								connection.resume();
-
-							});
-
-					} catch (ex) {
-
-						streamErr = ex;
-						connection.resume();
-
-					}
-
-				})
-				.on('end', () => {
-
-					if (streamErr) {
-
-						reject(streamErr);
-
-					} else {
-
-						resolve();
-
-					}
-
-				});
-
-		});
+		return queryWrapper(connection, query, options.segment);
 
 	},
 
@@ -132,9 +65,10 @@ export default {
 		record: any,
 		options: IQueryOptions = {}): Promise<void> {
 
-		return promisifyQuery
-		(connection, options.segment)
-		(connection.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record]));
+		return queryWrapper(
+			connection,
+			connection.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record]),
+			options.segment);
 
 	},
 

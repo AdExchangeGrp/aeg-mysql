@@ -1,14 +1,12 @@
-import MySQLPooled, { IPoolConfig } from '../../src/mysql-pooled';
+import MySQLPooled from '../../src/mysql-pooled';
 import * as config from 'config';
 import * as should from 'should';
 import * as xray from 'aws-xray-sdk';
 import * as winston from 'winston';
 import Segment from 'aws-xray-sdk';
-
-const mysql = xray.captureMySQL(require('mysql'));
+import { IPoolConfig } from 'mysql';
 
 xray.setLogger(winston);
-
 xray.enableManualMode();
 
 let segment: Segment | null = null;
@@ -35,8 +33,7 @@ before(() => {
 		acquireTimeout: 120000,
 		waitForConnections: true,
 		queueLimit: 0,
-		timezone: 'Z',
-		mysql
+		timezone: 'Z'
 	};
 
 	mysqlPool = new MySQLPooled(options);
@@ -73,13 +70,6 @@ describe('MySQLPooled', async () => {
 
 	});
 
-	it('queryAll', async () => {
-
-		const result = await mysqlPool!.queryAll('hitpath', 'state', queryOptions);
-		should.exist(result);
-
-	});
-
 	it('count', async () => {
 
 		const result = await mysqlPool!.count('hitpath', 'state', queryOptions);
@@ -99,7 +89,7 @@ describe('MySQLPooled', async () => {
 
 		await mysqlPool!.writeRecord('node_test', 'test_1', {id: 0, name: 'test'}, queryOptions);
 
-		const result = await mysqlPool!.queryAll('node_test', 'test_1', queryOptions);
+		const result = await mysqlPool!.query('select * from node_test.test_1', queryOptions);
 		should.exist(result);
 		should(result.length).be.equal(1);
 
@@ -117,7 +107,7 @@ describe('MySQLPooled', async () => {
 
 		});
 
-		const result = await mysqlPool!.queryAll('node_test', 'test_1', queryOptions);
+		const result = await mysqlPool!.query('select * from node_test.test_1', queryOptions);
 		should.exist(result);
 		should(result.length).be.equal(4);
 
@@ -142,7 +132,7 @@ describe('MySQLPooled', async () => {
 
 		}
 
-		const result = await mysqlPool!.queryAll('node_test', 'test_1', queryOptions);
+		const result = await mysqlPool!.query('select * from node_test.test_1', queryOptions);
 		should.exist(result);
 		should(result.length).be.equal(4);
 
