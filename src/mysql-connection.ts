@@ -145,12 +145,6 @@ class MySQLConnection extends MySQL {
 
 	}
 
-	public async queryAll (db: string, table: string): Promise<any[]> {
-
-		return actions.queryAll(this._connection, db, table, {segment: this._segment});
-
-	}
-
 	public async count (db: string, table: string): Promise<number> {
 
 		return actions.count(this._connection, db, table, {segment: this._segment});

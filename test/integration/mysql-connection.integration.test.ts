@@ -44,7 +44,7 @@ after(async () => {
 
 });
 
-describe('MySQLConnection', async () => {
+describe.skip('MySQLConnection', async () => {
 
 	it('tables', async () => {
 
