@@ -12,14 +12,15 @@ xray.enableManualMode();
 let segment: Segment | null = null;
 let options: IPoolConfig | null = null;
 let mysqlPool: MySQLPooled | null = null;
-
-segment = new xray.Segment('test kinesis');
-
-const queryOptions = {
-	segment
-};
+let queryOptions: any;
 
 before(() => {
+
+	segment = new xray.Segment('test');
+
+	queryOptions = {
+		segment
+	};
 
 	const rdsConf: any = config.get('aeg-mysql');
 
