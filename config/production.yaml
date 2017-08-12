@@ -1,5 +1,0 @@
-aeg-mysql:
-  host: "camp-ci-cluster.cluster-crg9xjuvtppr.us-west-2.rds.amazonaws.com"
-  user: "node_test"
-  password: "f3w3trdgfd4"
-  port: 3306

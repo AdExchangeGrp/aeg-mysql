@@ -1,3 +1,8 @@
+aeg-logger:
+  transports:
+    - type: console
+      level: debug
+
 aeg-mysql:
   host: "camp-ci-cluster.cluster-crg9xjuvtppr.us-west-2.rds.amazonaws.com"
   user: "node_test"

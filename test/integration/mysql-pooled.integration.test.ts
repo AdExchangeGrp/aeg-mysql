@@ -1,13 +1,11 @@
 import MySQLPooled from '../../src/mysql-pooled';
 import * as config from 'config';
 import * as should from 'should';
-import * as xray from 'aws-xray-sdk';
-import * as winston from 'winston';
-import Segment from 'aws-xray-sdk';
+import { Segment, XrayLogger } from '@adexchange/aeg-xray';
 import { IPoolConfig } from 'mysql';
+import logger from '@adexchange/aeg-logger';
 
-xray.setLogger(winston);
-xray.enableManualMode();
+XrayLogger.initialize(logger);
 
 let segment: Segment | null = null;
 let options: IPoolConfig | null = null;
@@ -16,7 +14,7 @@ let queryOptions: any;
 
 before(() => {
 
-	segment = new xray.Segment('test');
+	segment = new Segment('test');
 
 	queryOptions = {
 		segment
@@ -43,7 +41,7 @@ before(() => {
 
 after(async () => {
 
-	segment.close();
+	segment!.close();
 	await mysqlPool!.dispose();
 
 });

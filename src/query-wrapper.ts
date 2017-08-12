@@ -1,7 +1,5 @@
-import { IConnection } from 'mysql';
-import { Segment } from 'aws-xray-sdk';
-import * as SqlData from 'aws-xray-sdk-core/lib/database/sql_data';
-import { IPoolConfig } from 'mysql';
+import { IConnection, IPoolConfig } from 'mysql';
+import { Segment, SegmentSqlData } from '@adexchange/aeg-xray';
 
 export default (
 	connection: IConnection,
@@ -12,21 +10,23 @@ export default (
 
 		return new Promise((resolve, reject) => {
 
+			const sub = openSubSegment(connection.config, query, segment);
+
 			connection.query(query, (err, result) => {
 
 				if (err) {
 
-					writeSubSegment(connection.config, query, segment);
+					sub.close(err);
 					reject(err);
 
 				} else {
 
-					writeSubSegment(connection.config, query, segment);
+					sub.close();
 					resolve(result);
 
 				}
 
-			}, segment);
+			});
 
 		});
 
@@ -54,17 +54,10 @@ export default (
 
 };
 
-function writeSubSegment (
-	config: IPoolConfig,
-	query: string,
-	segment: Segment,
-	err?: Error): void {
-
-	const sub = segment.addNewSubsegment(config.database + '@' + config.host);
-	const sql = new SqlData(null, null, config.user, config.host + ':' + config.port + '/' + config.database);
-	sql.sanitized_query = query;
+function openSubSegment (config: IPoolConfig, query: string, segment: Segment): Segment {
+	const sub = new Segment(config.database + '@' + config.host);
+	segment.addSubSegment(sub);
+	const sql = new SegmentSqlData(config.user, config.host + ':' + config.port + '/' + config.database, {query});
 	sub.addSqlData(sql);
-	sub.namespace = 'remote';
-	sub.close(err);
-
+	return sub;
 }

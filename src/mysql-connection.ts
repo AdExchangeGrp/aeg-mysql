@@ -2,7 +2,7 @@ import * as mysql from 'mysql';
 import { MySQL } from './mysql';
 import actions from './actions';
 import { IConnection, IConnectionConfig as IMySQLConnectionConfig } from 'mysql';
-import Segment from 'aws-xray-sdk';
+import { Segment } from '@adexchange/aeg-xray';
 
 export interface IConnectionConfig extends IMySQLConnectionConfig {
 	noAutoCommit?: boolean;
@@ -72,7 +72,7 @@ class MySQLConnection extends MySQL {
 
 	private _connection: IConnection;
 
-	private _segment: Segment;
+	private _segment: Segment | undefined;
 
 	constructor (options: IConnectionConfig) {
 
