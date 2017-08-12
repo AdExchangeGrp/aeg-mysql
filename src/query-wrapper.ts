@@ -61,7 +61,9 @@ function writeSubSegment (
 	err?: Error): void {
 
 	const sub = segment.addNewSubsegment(config.database + '@' + config.host);
-	sub.addSqlData(new SqlData(null, null, config.user, config.host + ':' + config.port + '/' + config.database, query));
+	const sql = new SqlData(null, null, config.user, config.host + ':' + config.port + '/' + config.database);
+	sql.sanitized_query = query;
+	sub.addSqlData(sql);
 	sub.namespace = 'remote';
 	sub.close(err);
 
