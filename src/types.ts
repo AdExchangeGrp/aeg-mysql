@@ -1,4 +1,4 @@
-import { Segment } from 'aws-xray-sdk';
+import { Segment } from '@adexchange/aeg-xray';
 
 export interface IQueryOptions {
 	segment?: Segment;
