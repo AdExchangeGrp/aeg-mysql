@@ -6,10 +6,7 @@ import * as xray from 'aws-xray-sdk';
 import * as winston from 'winston';
 import Segment from 'aws-xray-sdk';
 
-const mysql = xray.captureMySQL(require('mysql'));
-
 xray.setLogger(winston);
-
 xray.enableManualMode();
 
 let segment: Segment | null = null;
@@ -29,7 +26,6 @@ before(async () => {
 		database: 'hitpath',
 		insecureAuth: true,
 		timezone: 'Z',
-		mysql,
 		segment
 	};
 
@@ -44,7 +40,7 @@ after(async () => {
 
 });
 
-describe.skip('MySQLConnection', async () => {
+describe('MySQLConnection', async () => {
 
 	it('tables', async () => {
 
@@ -56,13 +52,6 @@ describe.skip('MySQLConnection', async () => {
 	it('query', async () => {
 
 		const result = await mysqlConnection!.query('SELECT * FROM hits_sales LIMIT 10');
-		should.exist(result);
-
-	});
-
-	it('queryAll', async () => {
-
-		const result = await mysqlConnection!.queryAll('hitpath', 'state');
 		should.exist(result);
 
 	});
@@ -86,7 +75,7 @@ describe.skip('MySQLConnection', async () => {
 
 		await mysqlConnection!.writeRecord('node_test', 'test_1', {id: 0, name: 'test'});
 
-		const result = await mysqlConnection!.queryAll('node_test', 'test_1');
+		const result = await mysqlConnection!.query('select * from node_test.test_1');
 		should.exist(result);
 		should(result.length).be.equal(1);
 
@@ -104,7 +93,7 @@ describe.skip('MySQLConnection', async () => {
 
 		}, options!);
 
-		const result = await mysqlConnection!.queryAll('node_test', 'test_1');
+		const result = await mysqlConnection!.query('select * from node_test.test_1');
 		should.exist(result);
 		should(result.length).be.equal(4);
 
@@ -129,7 +118,7 @@ describe.skip('MySQLConnection', async () => {
 
 		}
 
-		const result = await mysqlConnection!.queryAll('node_test', 'test_1');
+		const result = await mysqlConnection!.query('select * from node_test.test_1');
 		should.exist(result);
 		should(result.length).be.equal(4);
 
@@ -139,7 +128,7 @@ describe.skip('MySQLConnection', async () => {
 
 		await MySQLConnection.withConnection(async (mysql) => {
 
-			const result = await mysql.queryAll('hitpath', 'state');
+			const result = await mysql!.query('select * from node_test.test_1');
 			should.exist(result);
 
 		}, options!);
@@ -150,7 +139,7 @@ describe.skip('MySQLConnection', async () => {
 
 		const r = await MySQLConnection.withConnection(async (mysql) => {
 
-			const result = await mysql.queryAll('hitpath', 'state');
+			const result = await mysql!.query('select * from node_test.test_1');
 			should.exist(result);
 			return result;
 
