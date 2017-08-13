@@ -24,7 +24,8 @@ before(async () => {
 		database: 'hitpath',
 		insecureAuth: true,
 		timezone: 'Z',
-		segment
+		segment,
+		emitProgress: true
 	};
 
 	mysqlConnection = new MySQLConnection(options);

@@ -8,19 +8,19 @@ export default {
 
 	async begin (connection: IConnection, options: IQueryOptions = {}): Promise<void> {
 
-		return queryWrapper(connection, 'START TRANSACTION', options.segment);
+		return queryWrapper(connection, 'START TRANSACTION', options);
 
 	},
 
 	async commit (connection: IConnection, options: IQueryOptions = {}): Promise<void> {
 
-		return queryWrapper(connection, 'COMMIT', options.segment);
+		return queryWrapper(connection, 'COMMIT', options);
 
 	},
 
 	async rollback (connection: IConnection, options: IQueryOptions = {}): Promise<void> {
 
-		return queryWrapper(connection, 'ROLLBACK', options.segment);
+		return queryWrapper(connection, 'ROLLBACK', options);
 
 	},
 
@@ -45,7 +45,7 @@ export default {
 
 	async query (connection: IConnection, query: string, options: IQueryOptions = {}): Promise<any[]> {
 
-		return queryWrapper(connection, query, options.segment);
+		return queryWrapper(connection, query, options);
 
 	},
 
@@ -67,7 +67,7 @@ export default {
 		return queryWrapper(
 			connection,
 			connection.format('INSERT INTO ??.?? SET ? ON DUPLICATE KEY UPDATE ?', [db, table, record, record]),
-			options.segment);
+			options);
 
 	},
 

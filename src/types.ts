@@ -2,6 +2,7 @@ import { Segment } from '@adexchange/aeg-xray';
 
 export interface IQueryOptions {
 	segment?: Segment;
+	emitProgress?: boolean;
 }
 
 export interface IMySqlQueryable {
