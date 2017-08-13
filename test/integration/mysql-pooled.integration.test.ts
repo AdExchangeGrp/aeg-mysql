@@ -57,7 +57,7 @@ describe('MySQLPooled', async () => {
 
 	it('format', async () => {
 
-		const result = mysqlPool!.format('SELECT * FROM hits_sales LIMIT 10');
+		const result = mysqlPool!.format('SELECT * FROM hits_sales LIMIT 10', queryOptions);
 		should.exist(result);
 
 	});
@@ -104,7 +104,7 @@ describe('MySQLPooled', async () => {
 			await connection.writeRecord('node_test', 'test_1', {id: 3, name: 'test4'});
 			await connection.query('select * from node_test.test_1');
 
-		});
+		}, queryOptions);
 
 		const result = await mysqlPool!.query('select * from node_test.test_1', queryOptions);
 		should.exist(result);
@@ -123,7 +123,7 @@ describe('MySQLPooled', async () => {
 				await connection.writeRecord('node_test', 'test_1', {id: 6, name: 'test7'});
 				throw new Error('kill it');
 
-			});
+			}, queryOptions);
 
 		} catch (ex) {
 
