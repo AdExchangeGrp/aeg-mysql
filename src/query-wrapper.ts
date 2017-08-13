@@ -1,16 +1,16 @@
-import { IConnection, IPoolConfig } from 'mysql';
-import { Segment, SegmentSqlData } from '@adexchange/aeg-xray';
+import { IConnection, IConnectionConfig } from 'mysql';
+import { Segment, SegmentSqlData, SubSegment } from '@adexchange/aeg-xray';
 
-export default (
+export default async (
 	connection: IConnection,
 	query: string,
-	segment?: Segment): Promise<any> => {
+	options: { emitProgress?: boolean, segment?: Segment | undefined } = {}): Promise<any> => {
 
-	if (segment) {
+	if (options.segment) {
+
+		const sub = openSubSegment(connection.config, query, options.segment, options);
 
 		return new Promise((resolve, reject) => {
-
-			const sub = openSubSegment(connection.config, query, segment);
 
 			connection.query(query, (err, result) => {
 
@@ -54,10 +54,13 @@ export default (
 
 };
 
-function openSubSegment (config: IPoolConfig, query: string, segment: Segment): Segment {
-	const sub = new Segment(config.database + '@' + config.host);
-	segment.addSubSegment(sub);
-	const sql = new SegmentSqlData(config.user, config.host + ':' + config.port + '/' + config.database, {query});
-	sub.addSqlData(sql);
+function openSubSegment (
+	config: IConnectionConfig, query: string,
+	segment: Segment,
+	options: { emitProgress?: boolean } = {}): SubSegment {
+
+	const sub = segment.addSubSegment(config.database + '@' + config.host, options);
+	sub.addSqlData = new SegmentSqlData(config.user, config.host + ':' + config.port + '/' + config.database, {query});
 	return sub;
+
 }
