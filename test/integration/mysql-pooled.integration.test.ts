@@ -17,7 +17,8 @@ before(() => {
 	segment = new Segment('test');
 
 	queryOptions = {
-		segment
+		segment,
+		emitProgress: true
 	};
 
 	const rdsConf: any = config.get('aeg-mysql');
