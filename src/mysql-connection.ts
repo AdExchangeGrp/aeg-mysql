@@ -3,11 +3,13 @@ import { MySQL } from './mysql';
 import actions from './actions';
 import { IConnection, IConnectionConfig as IMySQLConnectionConfig } from 'mysql';
 import { Segment } from '@adexchange/aeg-xray';
+import { IQueryOptions } from './types';
 
 export interface IConnectionConfig extends IMySQLConnectionConfig {
 	noAutoCommit?: boolean;
 	connection?: IConnection;
 	segment?: Segment;
+	emitProgress?: boolean;
 }
 
 class MySQLConnection extends MySQL {
@@ -72,13 +74,13 @@ class MySQLConnection extends MySQL {
 
 	private _connection: IConnection;
 
-	private _segment: Segment | undefined;
+	private _queryOptions: IQueryOptions;
 
 	constructor (options: IConnectionConfig) {
 
 		super(options);
 
-		this._segment = options.segment;
+		this._queryOptions = options;
 
 		if (options.connection) {
 
@@ -94,19 +96,19 @@ class MySQLConnection extends MySQL {
 
 	public async begin (): Promise<void> {
 
-		return actions.begin(this._connection, {segment: this._segment});
+		return actions.begin(this._connection, this._queryOptions);
 
 	}
 
 	public async commit (): Promise<void> {
 
-		return actions.commit(this._connection, {segment: this._segment});
+		return actions.commit(this._connection, this._queryOptions);
 
 	}
 
 	public async rollback (): Promise<void> {
 
-		return actions.rollback(this._connection, {segment: this._segment});
+		return actions.rollback(this._connection, this._queryOptions);
 
 	}
 
@@ -118,7 +120,7 @@ class MySQLConnection extends MySQL {
 
 	public async tables (db: string): Promise<string[]> {
 
-		return actions.tables(this._connection, db, {segment: this._segment});
+		return actions.tables(this._connection, db, this._queryOptions);
 
 	}
 
@@ -126,7 +128,7 @@ class MySQLConnection extends MySQL {
 
 		try {
 
-			return actions.query(this._connection, query, {segment: this._segment});
+			return actions.query(this._connection, query, this._queryOptions);
 
 		} catch (ex) {
 
@@ -145,13 +147,13 @@ class MySQLConnection extends MySQL {
 
 	public async count (db: string, table: string): Promise<number> {
 
-		return actions.count(this._connection, db, table, {segment: this._segment});
+		return actions.count(this._connection, db, table, this._queryOptions);
 
 	}
 
 	public async writeRecord (db: string, table: string, record: any): Promise<void> {
 
-		return actions.writeRecord(this._connection, db, table, record, {segment: this._segment});
+		return actions.writeRecord(this._connection, db, table, record, this._queryOptions);
 
 	}
 
