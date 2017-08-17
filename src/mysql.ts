@@ -1,5 +1,6 @@
 import { Base } from '@adexchange/aeg-common';
 import { IMySqlQueryable, IQueryOptions } from './types';
+import MySQLConnection from './mysql-connection';
 
 export abstract class MySQL extends Base implements IMySqlQueryable {
 
@@ -33,5 +34,9 @@ export abstract class MySQL extends Base implements IMySqlQueryable {
 		query: string,
 		args: any[],
 		options?: IQueryOptions): Promise<any[]>;
+
+	public abstract withTransaction (
+		delegate: (connection: MySQLConnection) => Promise<void> | void,
+		options?: IQueryOptions): Promise<void>;
 
 }
