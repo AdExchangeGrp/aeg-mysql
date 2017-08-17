@@ -157,6 +157,25 @@ class MySQLConnection extends MySQL {
 
 	}
 
+	public async withTransaction (
+		delegate: (connection: MySQLConnection) => Promise<void> | void): Promise<void> {
+
+		await this.begin();
+
+		try {
+
+			await Promise.resolve(delegate(this));
+			await this.commit();
+
+		} catch (ex) {
+
+			await this.rollback();
+			throw ex;
+
+		}
+
+	}
+
 	public async dispose (): Promise<void> {
 
 		await super.dispose();
