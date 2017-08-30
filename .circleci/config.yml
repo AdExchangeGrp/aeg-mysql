@@ -10,7 +10,7 @@ jobs:
           key: node_modules-{{ checksum "package.json" }}
       - run:
           name: npm install
-          command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && npm install
+          command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && npm install  --no-save
       - save_cache:
           key: node_modules-{{ checksum "package.json" }}
           paths:
