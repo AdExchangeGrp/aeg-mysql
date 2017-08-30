@@ -88,7 +88,7 @@ export default class MySQLPooled extends MySQL {
 
 	private async _getConnection (): Promise<IConnection> {
 
-		const getConnection = BBPromise.promisify(this._pool.getConnection, {context: this._pool});
+		const getConnection: any = BBPromise.promisify(this._pool.getConnection, {context: this._pool});
 		return getConnection();
 
 	}
