@@ -22,16 +22,14 @@ export default class MySQLPooled extends MySQL {
 		delegate: (connection: MySQLConnection) => Promise<void> | void,
 		options: IQueryOptions = {}): Promise<void> {
 
-		const connection = await this._getConnection();
-		await this._withConnection(connection, () =>
+		return this._withConnection((connection) =>
 			MySQLConnection.withTransaction(delegate, Object.assign({}, {connection}, options)));
 
 	}
 
 	public async tables (db: string, options: IQueryOptions = {}): Promise<string[]> {
 
-		const connection = await this._getConnection();
-		return await this._withConnection(connection, () => actions.tables(connection, db, options));
+		return this._withConnection((connection) => actions.tables(connection, db, options));
 
 	}
 
@@ -43,8 +41,7 @@ export default class MySQLPooled extends MySQL {
 
 	public async query (query: string, options: IQueryOptions = {}): Promise<any[]> {
 
-		const connection = await this._getConnection();
-		return await this._withConnection(connection, () => actions.query(connection, query, options));
+		return this._withConnection((connection) => actions.query(connection, query, options));
 
 	}
 
@@ -59,15 +56,13 @@ export default class MySQLPooled extends MySQL {
 
 	public async count (db: string, table: string, options: IQueryOptions = {}): Promise<number> {
 
-		const connection = await this._getConnection();
-		return await this._withConnection(connection, () => actions.count(connection, db, table, options));
+		return this._withConnection((connection) => actions.count(connection, db, table, options));
 
 	}
 
 	public async writeRecord (db: string, table: string, record: any, options: IQueryOptions = {}): Promise<void> {
 
-		const connection = await this._getConnection();
-		return await this._withConnection(connection, () => actions.writeRecord(connection, db, table, record, options));
+		return this._withConnection((connection) => actions.writeRecord(connection, db, table, record, options));
 
 	}
 
@@ -86,9 +81,9 @@ export default class MySQLPooled extends MySQL {
 
 	}
 
-	private async _withConnection<T> (connection: IConnection, delegate: (connection: IConnection) => Promise<T>)
-		: Promise<T> {
+	private async _withConnection<T> (delegate: (connection: IConnection) => Promise<T>): Promise<T> {
 
+		const connection = await this._getConnection();
 		let result: T;
 		try {
 
