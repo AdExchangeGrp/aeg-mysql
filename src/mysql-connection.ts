@@ -21,21 +21,28 @@ class MySQLConnection extends MySQL {
 		// noinspection JSCheckFunctionSignatures
 		const mysqlConnection = new MySQLConnection(options);
 
-		if (options.noAutoCommit) {
+		let result;
+		try {
 
-			await mysqlConnection.query('SET autocommit=0');
+			if (options.noAutoCommit) {
+
+				await mysqlConnection.query('SET autocommit=0');
+
+			}
+
+			result = await Promise.resolve(delegate(mysqlConnection));
+
+			if (options.noAutoCommit) {
+
+				await mysqlConnection.query('COMMIT');
+
+			}
+
+		} finally {
+
+			await mysqlConnection.dispose();
 
 		}
-
-		const result = await Promise.resolve(delegate(mysqlConnection));
-
-		if (options.noAutoCommit) {
-
-			await mysqlConnection.query('COMMIT');
-
-		}
-
-		await mysqlConnection.dispose();
 
 		return result;
 
