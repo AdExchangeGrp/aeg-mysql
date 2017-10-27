@@ -1,9 +1,9 @@
 import MySQLPooled from '../../src/mysql-pooled';
 import * as config from 'config';
 import * as should from 'should';
-import { Segment, XrayLogger } from '@adexchange/aeg-xray';
+import { Segment, XrayLogger } from '@push_innovation/aeg-xray';
 import { IPoolConfig } from 'mysql';
-import logger from '@adexchange/aeg-logger';
+import logger from '@push_innovation/aeg-logger';
 
 XrayLogger.initialize(logger);
 

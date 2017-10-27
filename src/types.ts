@@ -1,4 +1,4 @@
-import { Segment } from '@adexchange/aeg-xray';
+import { Segment } from '@push_innovation/aeg-xray';
 import MySQLConnection from './mysql-connection';
 
 export interface IQueryOptions {

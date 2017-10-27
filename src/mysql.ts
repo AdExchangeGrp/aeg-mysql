@@ -1,4 +1,4 @@
-import { Base } from '@adexchange/aeg-common';
+import { Base } from '@push_innovation/aeg-common';
 import { IMySqlQueryable, IQueryOptions } from './types';
 import MySQLConnection from './mysql-connection';
 

@@ -1,5 +1,5 @@
 {
-  "name": "@adexchange/aeg-mysql",
+  "name": "@push_innovation/aeg-mysql",
   "version": "0.0.1",
   "description": "Mysql driver",
   "main": "./lib/index.js",
@@ -7,7 +7,7 @@
   "author": "Ad Exchange Group",
   "repository": {
     "type": "git",
-    "url": "git://git@bitbucket.org:AdExchangeGrp/aeg-mysql.git"
+    "url": "https://github.com/pushinnovation/aeg-mysql.git"
   },
   "license": "UNLICENSED",
   "scripts": {
@@ -41,7 +41,7 @@
     "all": true
   },
   "devDependencies": {
-    "@adexchange/aeg-logger": "0.0.145",
+    "@push_innovation/aeg-logger": "0.0.6",
     "@types/mocha": "^2.2.41",
     "@types/node": "^6.0.0",
     "mocha": "^3.2.0",
@@ -54,8 +54,8 @@
     "typescript": "^2.4.1"
   },
   "dependencies": {
-    "@adexchange/aeg-common": "0.0.248",
-    "@adexchange/aeg-xray": "0.0.53",
+    "@push_innovation/aeg-common": "0.0.8",
+    "@push_innovation/aeg-xray": "^0.0.8",
     "@types/config": "0.0.32",
     "@types/lodash": "^4.14.70",
     "@types/mysql": "0.0.34",

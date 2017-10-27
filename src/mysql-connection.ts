@@ -2,7 +2,7 @@ import * as mysql from 'mysql';
 import { MySQL } from './mysql';
 import actions from './actions';
 import { IConnection, IConnectionConfig as IMySQLConnectionConfig } from 'mysql';
-import { Segment } from '@adexchange/aeg-xray';
+import { Segment } from '@push_innovation/aeg-xray';
 import { IQueryOptions } from './types';
 
 export interface IConnectionConfig extends IMySQLConnectionConfig {

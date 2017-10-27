@@ -1,5 +1,5 @@
 import { IConnection, IConnectionConfig } from 'mysql';
-import { Segment, SegmentSqlData, SubSegment } from '@adexchange/aeg-xray';
+import { Segment, SegmentSqlData, SubSegment } from '@push_innovation/aeg-xray';
 
 export default async (
 	connection: IConnection,

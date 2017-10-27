@@ -2,8 +2,8 @@ import MySQLConnection, { IConnectionConfig } from '../../src/mysql-connection';
 import * as config from 'config';
 import * as should from 'should';
 import * as _ from 'lodash';
-import { Segment, XrayLogger } from '@adexchange/aeg-xray';
-import logger from '@adexchange/aeg-logger';
+import { Segment, XrayLogger } from '@push_innovation/aeg-xray';
+import logger from '@push_innovation/aeg-logger';
 
 XrayLogger.initialize(logger);
 
