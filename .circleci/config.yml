@@ -7,12 +7,12 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{ checksum "package.json" }}
+          key: node_modules-{{ checksum "yarn.lock" }}
       - run:
-          name: npm install
-          command: echo //registry.npmjs.org/:_authToken=$NPM_TOKEN >> ~/.npmrc && npm install --no-save
+          name: yarn install
+          command: echo -e "always-auth=true\n//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc && yarn --frozen-lockfile --non-interactive
       - save_cache:
-          key: node_modules-{{ checksum "package.json" }}
+          key: node_modules-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
 

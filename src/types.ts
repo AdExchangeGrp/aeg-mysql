@@ -9,6 +9,7 @@ export interface IQueryOptions {
 export interface IMySqlQueryable {
 	format (query: string, args: Array<string | number>): string;
 	query (query: string, options?: IQueryOptions): Promise<any[]>;
+	writeRecord (db: string, table: string, record: any): Promise<void>;
 	queryWithArgs (
 		query: string,
 		args: any[],
